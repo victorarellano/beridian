@@ -1,4 +1,4 @@
-# Debt Manager
+# Beridian
 
 A modern personal finance management platform built with .NET 8, PostgreSQL and cloud-native technologies.
 
@@ -87,7 +87,7 @@ Expected output:
 Create the solution file:
 
 ```bash
-dotnet new sln -n DebtManager
+dotnet new sln -n Beridian
 ```
 
 Create the project folders:
@@ -102,34 +102,52 @@ Create the projects:
 ```bash
 cd src
 
-dotnet new webapi -n DebtManager.Api
-dotnet new classlib -n DebtManager.Application
-dotnet new classlib -n DebtManager.Domain
-dotnet new classlib -n DebtManager.Infrastructure
+dotnet new webapi -n Beridian.Api
+dotnet new classlib -n Beridian.Application
+dotnet new classlib -n Beridian.Domain
+dotnet new classlib -n Beridian.Infrastructure
 
 cd ..
 
 cd tests
 
-dotnet new xunit -n DebtManager.Tests
+dotnet new xunit -n Beridian.Tests
 
 cd ..
 
-dotnet sln DebtManager.sln add src/DebtManager.Api/DebtManager.Api.csproj
+dotnet sln Beridian.sln add src/Beridian.Api/Beridian.Api.csproj
+dotnet sln Beridian.sln add src/Beridian.Application/Beridian.Application.csproj
+dotnet sln Beridian.sln add src/Beridian.Domain/Beridian.Domain.csproj
+dotnet sln Beridian.sln add src/Beridian.Infrastructure/Beridian.Infrastructure.csproj
+dotnet sln Beridian.sln add tests/Beridian.Tests/Beridian.Tests.csproj
 
-dotnet sln DebtManager.sln add src/DebtManager.Application/DebtManager.Application.csproj
+dotnet add src/Beridian.Application/Beridian.Application.csproj reference src/Beridian.Domain/Beridian.Domain.csproj
+dotnet add src/Beridian.Infrastructure/Beridian.Infrastructure.csproj reference src/Beridian.Application/Beridian.Application.csproj
+dotnet add src/Beridian.Infrastructure/Beridian.Infrastructure.csproj reference src/Beridian.Domain/Beridian.Domain.csproj
+dotnet add src/Beridian.Api/Beridian.Api.csproj reference src/Beridian.Application/Beridian.Application.csproj
+dotnet add src/Beridian.Api/Beridian.Api.csproj reference src/Beridian.Infrastructure/Beridian.Infrastructure.csproj
+dotnet add tests/Beridian.Tests/Beridian.Tests.csproj reference src/Beridian.Application/Beridian.Application.csproj
+dotnet add tests/Beridian.Tests/Beridian.Tests.csproj reference src/Beridian.Domain/Beridian.Domain.csproj
+dotnet add tests/Beridian.Tests/Beridian.Tests.csproj reference src/Beridian.Infrastructure/Beridian.Infrastructure.csproj
 
-dotnet sln DebtManager.sln add src/DebtManager.Domain/DebtManager.Domain.csproj
-
-dotnet sln DebtManager.sln add src/DebtManager.Infrastructure/DebtManager.Infrastructure.csproj
-
-dotnet sln DebtManager.sln add tests/DebtManager.Tests/DebtManager.Tests.csproj
+dotnet build
 
 ```
 
 At this stage, the solution follows the **Clean Architecture** structure.
 
 The projects will be added to the solution and configured during the next development steps.
+
+## References Packages
+
+```text
+dotnet add src/Beridian.Application package Microsoft.Extensions.DependencyInjection.Abstractions
+dotnet add src/Beridian.Infrastructure package Microsoft.Extensions.DependencyInjection.Abstractions
+dotnet add src/Beridian.Infrastructure package Microsoft.Extensions.Configuration.Abstractions
+
+dotnet add src/Beridian.Api reference src/Beridian.Application
+dotnet add src/Beridian.Api reference src/Beridian.Infrastructure
+```
 
 ---
 
@@ -140,13 +158,90 @@ Generate the standard .NET gitignore file:
 ```bash
 dotnet new gitignore
 ```
+Initialize the local Git repository:
+
+```bash
+git init
+```
+
+Rename the default branch:
+
+```bash
+git branch -M main
+```
+
+Connect the local repository to GitHub:
+
+```bash
+git remote add origin <repository-url>
+```
+
+Verify the remote configuration:
+
+```bash
+git remote -v
+```
+
 ---
 
-## Alternative
+## First Commit
+
+Stage all project files:
+
 ```bash
-.\scripts\bootstrap-project.ps1 -ProjectName DebtManager
-dotnet sln list
+git add .
 ```
+
+Create the initial commit:
+
+```bash
+git commit -m "Initialize project structure"
+```
+
+Publish the repository to GitHub:
+
+```bash
+git push -u origin main
+```
+
+The `-u` option configures the upstream branch so future pushes only require:
+
+```bash
+git push
+```
+
+and updates can be retrieved with:
+
+```bash
+git pull
+```
+
+---
+
+## Project Bootstrap
+
+The project includes a PowerShell bootstrap script that automates the initial project setup.
+
+Run:
+
+```powershell
+.\scripts\bootstrap-project.ps1 -ProjectName Beridian
+```
+
+The script performs the following tasks:
+
+- Validates that .NET 8 SDK is installed.
+- Creates the `global.json` file (if missing).
+- Creates the solution.
+- Creates the `src` and `tests` folders.
+- Generates the Clean Architecture projects.
+- Adds all projects to the solution.
+- Creates the official .NET `.gitignore` file.
+- Displays a summary of the generated structure.
+
+This script is intended to automate the initial project setup and can be reused by changing only the project name.
+
+---
 
 ## Project Status
 

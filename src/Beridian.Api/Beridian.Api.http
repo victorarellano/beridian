@@ -1,0 +1,6 @@
+@Beridian.api_HostAddress = http://localhost:5155
+
+GET {{Beridian.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,68 @@
+title Beridian - Domain Model
+
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "Aggregate" {
+
+class FinancialPeriod <<Aggregate Root>>
+
+}
+
+package "Entities" {
+
+class Expense
+class ExpenseDetail
+class Income
+class Investment
+
+}
+
+package "Configuration" {
+
+class ExpenseCategory
+
+}
+
+package "Value Objects" {
+
+class Money
+class Period
+class ExpenseType
+class TransferredBalance
+
+}
+
+package "Domain Services" {
+
+class FinancialPeriodGenerator <<Domain Service>>
+
+}
+
+package "Domain Events" {
+
+class FinancialPeriodGenerated <<Domain Event>>
+class FinancialPeriodClosed <<Domain Event>>
+
+}
+
+FinancialPeriod *-- Expense
+Expense *-- ExpenseDetail
+FinancialPeriod *-- Income
+FinancialPeriod *-- Investment
+
+FinancialPeriod --> Period
+FinancialPeriod --> TransferredBalance
+
+Expense --> Money
+Income --> Money
+Investment --> Money
+
+Expense --> ExpenseType
+Expense --> ExpenseCategory
+
+FinancialPeriodGenerator ..> FinancialPeriod : creates
+
+FinancialPeriod ..> FinancialPeriodGenerated
+FinancialPeriod ..> FinancialPeriodClosed

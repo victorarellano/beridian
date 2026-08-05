@@ -71,3 +71,46 @@ Write-Host "Tests:    tests/"
 Write-Host ""
 Write-Host "Next step:"
 Write-Host "dotnet sln list"
+
+
+Write-Host "Configuring project references..."
+# Application -> Domain
+dotnet add "src/$ProjectName.Application/$ProjectName.Application.csproj" reference `
+    "src/$ProjectName.Domain/$ProjectName.Domain.csproj"
+
+# Infrastructure -> Application + Domain
+dotnet add "src/$ProjectName.Infrastructure/$ProjectName.Infrastructure.csproj" reference `
+    "src/$ProjectName.Application/$ProjectName.Application.csproj"
+
+dotnet add "src/$ProjectName.Infrastructure/$ProjectName.Infrastructure.csproj" reference `
+    "src/$ProjectName.Domain/$ProjectName.Domain.csproj"
+
+# API -> Application + Infrastructure
+dotnet add "src/$ProjectName.Api/$ProjectName.Api.csproj" reference `
+    "src/$ProjectName.Application/$ProjectName.Application.csproj"
+
+dotnet add "src/$ProjectName.Api/$ProjectName.Api.csproj" reference `
+    "src/$ProjectName.Infrastructure/$ProjectName.Infrastructure.csproj"
+
+# Tests -> Application + Domain + Infrastructure
+dotnet add "tests/$ProjectName.Tests/$ProjectName.Tests.csproj" reference `
+    "src/$ProjectName.Application/$ProjectName.Application.csproj"
+
+dotnet add "tests/$ProjectName.Tests/$ProjectName.Tests.csproj" reference `
+    "src/$ProjectName.Domain/$ProjectName.Domain.csproj"
+
+dotnet add "tests/$ProjectName.Tests/$ProjectName.Tests.csproj" reference `
+    "src/$ProjectName.Infrastructure/$ProjectName.Infrastructure.csproj"
+
+Write-Host ""
+Write-Host "Building solution..."
+dotnet build
+
+if ($LASTEXITCODE -eq 0) {
+    Write-Host ""
+    Write-Host "Bootstrap completed successfully." -ForegroundColor Green
+}
+else {
+    Write-Host ""
+    Write-Host "Build failed. Please review the errors." -ForegroundColor Red
+}
