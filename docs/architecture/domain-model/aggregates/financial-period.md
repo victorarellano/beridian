@@ -108,6 +108,7 @@ The following invariants must always hold true.
 | INV-005 | A closed FinancialPeriod cannot be modified. |
 | INV-006 | A closed FinancialPeriod contains no Expense or Income that remains unentered. |
 | INV-007 | A definitive opening balance cannot be replaced by a provisional opening balance. |
+| INV-008 | The FinancialPeriod always has a valid identity. |
 ---
 
 ## Notes

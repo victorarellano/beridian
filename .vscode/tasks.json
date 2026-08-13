@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Format Beridian",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "format",
+        "${workspaceFolder}/Beridian.sln",
+        "--verbosity",
+        "minimal"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      }
+    }
+  ]
+}

@@ -28,5 +28,6 @@ Each phase defines:
 | [07](./07-kubernetes.md) | Kubernetes |
 | [08](./08-intelligent-financial-assistant.md) | Intelligent Financial Assistant |
 | [09](./09-product-portfolio-release.md) | Product & Portfolio Release |
+| [10](./10-planning-simulation-finance.md) | Planificacion y Simulacion Financiera |
 
 

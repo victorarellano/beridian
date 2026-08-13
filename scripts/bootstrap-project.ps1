@@ -13,6 +13,9 @@ if (-not $dotnetVersion.StartsWith("8.")) {
     exit 1
 }
 
+Write-Host "Installing Roslynator VS Code extension..."
+code --install-extension josefpihrt-vscode.roslynator
+
 # Create global.json if missing
 if (-not (Test-Path "global.json")) {
     dotnet new globaljson --sdk-version $dotnetVersion
