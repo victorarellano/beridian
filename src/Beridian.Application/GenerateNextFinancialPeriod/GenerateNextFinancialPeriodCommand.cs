@@ -1,0 +1,3 @@
+namespace Beridian.Application.FinancialPeriods.GenerateNextFinancialPeriod;
+
+public sealed record GenerateNextFinancialPeriodCommand(Guid FinancialPeriodId);

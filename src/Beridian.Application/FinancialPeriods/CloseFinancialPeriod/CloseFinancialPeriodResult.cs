@@ -1,0 +1,3 @@
+namespace Beridian.Application.FinancialPeriods.CloseFinancialPeriod;
+
+public sealed record CloseFinancialPeriodResult(Guid FinancialPeriodId);
