@@ -1,13 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>a7f1eb24-2787-4a41-afca-ecc897a291a8</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.19" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
@@ -15,5 +22,9 @@
     <ProjectReference Include="..\Beridian.Application\Beridian.Application.csproj" />
     <ProjectReference Include="..\Beridian.Infrastructure\Beridian.Infrastructure.csproj" />
   </ItemGroup>
+
+   <ItemGroup>
+    <InternalsVisibleTo Include="Beridian.Api.Tests" />
+  </ItemGroup> 
 
 </Project>

@@ -1,3 +1,7 @@
+using Beridian.Api.Endpoints.FinancialPeriods;
+using Beridian.Api.ExceptionHandling;
+using Beridian.Api.OpenApi;
+using Beridian.Api.Versioning;
 using Beridian.Application;
 using Beridian.Infrastructure;
 
@@ -6,13 +10,18 @@ var builder = WebApplication.CreateBuilder(args);
 //Add services from layers
 builder.Services
     .AddApplication()
-    .AddInfrastructure(builder.Configuration);
+    .AddInfrastructure(builder.Configuration)
+    .AddApiVersioningConfiguration();   
 
 // Add services to the container.
 builder.Services
-    .AddEndpointsApiExplorer();
+    .AddEndpointsApiExplorer()
+    .AddSwaggerGen()
+    .ConfigureOptions<ConfigureSwaggerOptions>();
+
 builder.Services
-    .AddSwaggerGen();
+    .AddProblemDetails()
+    .AddAllExceptionHandlers();
 
 var app = builder.Build();
 
@@ -20,34 +29,23 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        var apiVersionDescriptionProvider =
+            app.Services.GetRequiredService<Asp.Versioning.ApiExplorer.IApiVersionDescriptionProvider>();
+
+        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+        {
+            options.SwaggerEndpoint(
+                $"/swagger/{description.GroupName}/swagger.json",
+                $"Beridian API {description.GroupName.ToUpperInvariant()}");
+        }
+    });
 }
 
+app.UseExceptionHandler();
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+app.MapFinancialPeriodEndpoints();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
