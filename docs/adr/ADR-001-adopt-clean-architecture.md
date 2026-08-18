@@ -16,7 +16,7 @@ Beridian will use Clean Architecture with the following projects:
 - `Beridian.Application`
 - `Beridian.Infrastructure`
 - `Beridian.Api`
-- `Beridian.Tests`
+- `Beridian.Domain.Tests`
 
 Dependencies must point toward the core of the application.
 

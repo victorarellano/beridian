@@ -34,6 +34,91 @@ Before running the project, ensure the following tools are installed:
 
 ---
 
+## Run the Project Locally
+
+Follow these steps to clone and run the existing Beridian repository.
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/victorarellano/beridian.git
+cd beridian
+```
+
+### Restore Dependencies
+
+```bash
+dotnet restore
+dotnet build
+```
+
+### Configure PostgreSQL
+
+Create a `.env` file in the solution root using `.env.example` as a template.
+
+PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Bash:
+
+```bash
+cp .env.example .env
+```
+
+Update the local values:
+
+```dotenv
+POSTGRES_DB=beridian
+POSTGRES_USER=beridian
+POSTGRES_PASSWORD=replace_with_local_password
+```
+
+The `.env` file contains local credentials and must not be committed to Git.
+
+### Start PostgreSQL
+
+```bash
+docker compose up -d
+docker compose ps
+```
+
+Wait until the `beridian-postgres` container reports a `healthy` status.
+
+### Configure the Application Connection String
+
+The password must match `POSTGRES_PASSWORD` from the `.env` file.
+
+```powershell
+dotnet user-secrets set "ConnectionStrings:Database" "Host=localhost;Port=5432;Database=beridian;Username=beridian;Password=replace_with_local_password" --project src/Beridian.Api/Beridian.Api.csproj
+```
+
+### Apply Database Migrations
+
+```powershell
+dotnet ef database update --project src/Beridian.Infrastructure/Beridian.Infrastructure.csproj --startup-project src/Beridian.Api/Beridian.Api.csproj --context BeridianDbContext
+```
+
+### Run the API
+
+```bash
+dotnet run --project src/Beridian.Api/Beridian.Api.csproj
+```
+
+Use the URL displayed in the terminal to access the running API.
+
+### Stop the Local Database
+
+```bash
+docker compose down
+```
+
+This stops the PostgreSQL container without deleting the persisted data stored in the named Docker volume.
+
+---
+
 ## Verify Installed SDKs
 
 Run:
@@ -111,24 +196,34 @@ cd ..
 
 cd tests
 
-dotnet new xunit -n Beridian.Tests
-
+dotnet new xunit -n Beridian.Domain.Tests
+dotnet new xunit -n Beridian.Application.Tests
+dotnet new xunit -n Beridian.Infrastructure.Tests
+dotnet new xunit -n Beridian.Api.Tests
 cd ..
 
 dotnet sln Beridian.sln add src/Beridian.Api/Beridian.Api.csproj
 dotnet sln Beridian.sln add src/Beridian.Application/Beridian.Application.csproj
 dotnet sln Beridian.sln add src/Beridian.Domain/Beridian.Domain.csproj
 dotnet sln Beridian.sln add src/Beridian.Infrastructure/Beridian.Infrastructure.csproj
-dotnet sln Beridian.sln add tests/Beridian.Tests/Beridian.Tests.csproj
+dotnet sln Beridian.sln add tests/Beridian.Domain.Tests/Beridian.Domain.Tests.csproj
+dotnet sln Beridian.sln add tests/Beridian.Application.Tests/Beridian.Application.Tests.csproj
+dotnet sln Beridian.sln add tests/Beridian.Api.Tests/Beridian.Api.Tests.csproj
+dotnet sln Beridian.sln add tests/Beridian.Infrastructure.Tests/Beridian.Infrastructure.Tests.csproj
 
 dotnet add src/Beridian.Application/Beridian.Application.csproj reference src/Beridian.Domain/Beridian.Domain.csproj
 dotnet add src/Beridian.Infrastructure/Beridian.Infrastructure.csproj reference src/Beridian.Application/Beridian.Application.csproj
 dotnet add src/Beridian.Infrastructure/Beridian.Infrastructure.csproj reference src/Beridian.Domain/Beridian.Domain.csproj
 dotnet add src/Beridian.Api/Beridian.Api.csproj reference src/Beridian.Application/Beridian.Application.csproj
 dotnet add src/Beridian.Api/Beridian.Api.csproj reference src/Beridian.Infrastructure/Beridian.Infrastructure.csproj
-dotnet add tests/Beridian.Tests/Beridian.Tests.csproj reference src/Beridian.Application/Beridian.Application.csproj
-dotnet add tests/Beridian.Tests/Beridian.Tests.csproj reference src/Beridian.Domain/Beridian.Domain.csproj
-dotnet add tests/Beridian.Tests/Beridian.Tests.csproj reference src/Beridian.Infrastructure/Beridian.Infrastructure.csproj
+dotnet add tests/Beridian.Domain.Tests/Beridian.Domain.Tests.csproj reference src/Beridian.Application/Beridian.Application.csproj
+dotnet add tests/Beridian.Domain.Tests/Beridian.Domain.Tests.csproj reference src/Beridian.Domain/Beridian.Domain.csproj
+dotnet add tests/Beridian.Domain.Tests/Beridian.Domain.Tests.csproj reference src/Beridian.Infrastructure/Beridian.Infrastructure.csproj
+dotnet add tests/Beridian.Infrastructure.Tests/Beridian.Infrastructure.Tests.csproj reference src/Beridian.Infrastructure/Beridian.Infrastructure.csproj
+dotnet add tests/Beridian.Infrastructure.Tests/Beridian.Infrastructure.Tests.csproj reference src/Beridian.Domain/Beridian.Domain.csproj
+dotnet add tests/Beridian.Infrastructure.Tests/Beridian.Infrastructure.Tests.csproj package Testcontainers.PostgreSql
+dotnet add tests/Beridian.Api.Tests/Beridian.Api.Tests.csproj reference src/Beridian.Api/Beridian.Api.csproj
+dotnet add tests/Beridian.Api.Tests/Beridian.Api.Tests.csproj package FluentAssertions
 
 dotnet build
 
@@ -137,6 +232,8 @@ dotnet build
 At this stage, the solution follows the **Clean Architecture** structure.
 
 The projects will be added to the solution and configured during the next development steps.
+
+---
 
 ## References Packages
 
@@ -147,7 +244,236 @@ dotnet add src/Beridian.Infrastructure package Microsoft.Extensions.Configuratio
 
 dotnet add src/Beridian.Api reference src/Beridian.Application
 dotnet add src/Beridian.Api reference src/Beridian.Infrastructure
+dotnet add src/Beridian.Api/Beridian.Api.csproj package Asp.Versioning.Http --version 8.1.0
+dotnet add src/Beridian.Api/Beridian.Api.csproj package Asp.Versioning.Mvc.ApiExplorer --version 8.1.0
+dotnet add src/Beridian.Api/Beridian.Api.csproj package Microsoft.EntityFrameworkCore.Design --version 8.0.8
 ```
+
+---
+
+## Configure Infrastructure Persistence Initial
+Add Entity Framework Core and the PostgreSQL provider:
+
+```bash
+cd src/Beridian.Infrastructure
+
+dotnet add package Microsoft.EntityFrameworkCore --version 8.0.8
+dotnet add package Microsoft.EntityFrameworkCore.Design --version 8.0.8
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 8.0.8
+
+```
+
+### Install the Entity Framework Core
+```bash
+dotnet tool install --global dotnet-ef --version 8.0.8
+dotnet tool update --global dotnet-ef --version 8.0.8
+
+dotnet ef --version
+
+cd ../..
+
+dotnet restore
+dotnet build
+```
+
+For migration commands and conventions, see [Database Development Guide](docs/development/database.md).
+
+### Configure the Local Database Secret
+
+Beridian reads the PostgreSQL connection string from the `ConnectionStrings:Database` configuration key.
+
+Initialize .NET User Secrets for the API project:
+
+```bash
+dotnet user-secrets init \
+  --project src/Beridian.Api/Beridian.Api.csproj
+```
+
+Configure the local database connection, replacing the placeholder values with the local PostgreSQL credentials:
+
+```bash
+dotnet user-secrets set \
+  "ConnectionStrings:Database" \
+  "Host=localhost;Port=5432;Database=beridian;Username=beridian;Password=YOUR_PASSWORD" \
+  --project src/Beridian.Api/Beridian.Api.csproj
+```
+
+Verify that the configuration was registered:
+
+```bash
+dotnet user-secrets list \
+  --project src/Beridian.Api/Beridian.Api.csproj
+```
+
+User Secrets are intended only for local development. The secret values are stored outside the repository and must not be committed to Git.
+
+Deployment environments must provide the connection string through their secure configuration mechanism or through the following environment variable:
+
+```text
+ConnectionStrings__Database
+```
+---
+
+### Create the Initial Database Migration
+
+Run the following command from the solution root:
+
+```bash
+dotnet ef migrations add InitialCreate \
+  --project src/Beridian.Infrastructure/Beridian.Infrastructure.csproj \
+  --startup-project src/Beridian.Api/Beridian.Api.csproj \
+  --context BeridianDbContext \
+  --output-dir Persistence/Migrations
+```
+
+For PowerShell, the command can be executed on a single line:
+
+```powershell
+dotnet ef migrations add InitialCreate --project src/Beridian.Infrastructure/Beridian.Infrastructure.csproj --startup-project src/Beridian.Api/Beridian.Api.csproj --context BeridianDbContext --output-dir Persistence/Migrations
+```
+
+The options indicate:
+
+* `--project`: the project containing `BeridianDbContext` and the migrations.
+* `--startup-project`: the executable project that supplies application configuration and dependency registration.
+* `--context`: the EF Core context used to generate the model.
+* `--output-dir`: the migration directory relative to the Infrastructure project.
+
+The command generates:
+
+```text
+src/Beridian.Infrastructure/
+└── Persistence/
+    └── Migrations/
+        ├── <timestamp>_InitialCreate.cs
+        ├── <timestamp>_InitialCreate.Designer.cs
+        └── BeridianDbContextModelSnapshot.cs
+```
+
+Creating a migration validates the EF Core model but does not apply changes to PostgreSQL.
+
+Review the generated migration before committing it or applying it to a database. In particular, verify:
+
+* Table and column names.
+* Primary and foreign keys.
+* Nullability.
+* Numeric precision.
+* Discriminator values.
+* Check constraints.
+* Cascade deletion rules.
+* Indexes.
+
+For revert generate migration, execute command:
+```powershell
+dotnet ef migrations remove --project src/Beridian.Infrastructure/Beridian.Infrastructure.csproj --startup-project src/Beridian.Api/Beridian.Api.csproj --context BeridianDbContext
+```
+
+Migration files and the model snapshot must be committed to Git.
+
+---
+
+### Run PostgreSQL Locally with Docker Compose
+
+Beridian uses PostgreSQL 16 for local persistence. The database runs in a Docker container and stores its data in a named volume.
+
+#### Configure Docker Compose
+
+Create a `compose.yml` file in the solution root:
+
+```yaml
+services:
+  postgres:
+    image: postgres:16
+    container_name: beridian-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - beridian-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  beridian-postgres-data:
+```
+
+#### Configure Local Environment Variables
+
+Create a `.env` file in the solution root:
+
+```dotenv
+POSTGRES_DB=beridian
+POSTGRES_USER=beridian
+POSTGRES_PASSWORD=replace_with_local_password
+```
+
+The `.env` file contains local credentials and must not be committed. Ensure `.gitignore` contains:
+
+```gitignore
+.env
+```
+
+Create a version-controlled `.env.example` file containing only placeholder values:
+
+```dotenv
+POSTGRES_DB=beridian
+POSTGRES_USER=beridian
+POSTGRES_PASSWORD=replace_with_local_password
+```
+
+#### Configure the Application Connection String
+
+The password in the connection string must match `POSTGRES_PASSWORD` from the local `.env` file.
+
+Store the connection string using .NET User Secrets:
+
+```powershell
+dotnet user-secrets set "ConnectionStrings:Database" "Host=localhost;Port=5432;Database=beridian;Username=beridian;Password=replace_with_local_password" --project src/Beridian.Api/Beridian.Api.csproj
+```
+
+User Secrets are used only for local development and are not committed to the repository.
+
+#### Start PostgreSQL
+
+From the solution root, run:
+
+```powershell
+docker compose up -d
+```
+
+Verify the container status:
+
+```powershell
+docker compose ps
+```
+
+The `beridian-postgres` container should report a `healthy` status before database operations are executed.
+
+To inspect its logs:
+
+```powershell
+docker compose logs postgres
+```
+
+#### Stop PostgreSQL
+
+Stop the container without deleting its persisted data:
+
+```powershell
+docker compose down
+```
+
+The `beridian-postgres-data` volume remains available and will be reused the next time PostgreSQL starts.
+
 
 ---
 

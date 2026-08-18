@@ -11,7 +11,7 @@ Beridian.Api
 Beridian.Application
 Beridian.Domain
 Beridian.Infrastructure
-Beridian.Tests
+Beridian.Domain.Tests
 ```
 
 ## Dependency Rule
