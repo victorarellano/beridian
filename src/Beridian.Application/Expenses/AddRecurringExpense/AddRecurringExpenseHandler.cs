@@ -1,4 +1,5 @@
 using Beridian.Application.Abstractions.Persistence;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Domain.Common;
 using Beridian.Domain.Expenses;
 
@@ -21,7 +22,7 @@ public sealed class AddRecurringExpenseHandler
 
         if (financialPeriod is null)
         {
-            throw new InvalidOperationException("Financial period was not found.");
+            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);
         }
 
         var expense = RecurringExpense.Create(command.Name, Money.Create(command.PlannedAmount, Currency.Clp));

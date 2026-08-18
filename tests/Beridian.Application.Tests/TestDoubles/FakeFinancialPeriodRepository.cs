@@ -15,6 +15,18 @@ internal sealed class FakeFinancialPeriodRepository
         _periods[financialPeriod.Id] = financialPeriod;
     }
 
+    public Task<bool> ExistsByPeriodAsync(Period period, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(period);
+
+        var exists = _periods.Values.Any(
+            financialPeriod =>
+                financialPeriod.Period.Year == period.Year &&
+                financialPeriod.Period.Month == period.Month);
+
+        return Task.FromResult(exists);
+    }    
+
     public Task AddAsync(FinancialPeriod financialPeriod, CancellationToken cancellationToken = default)
     {
         AddedFinancialPeriod = financialPeriod;

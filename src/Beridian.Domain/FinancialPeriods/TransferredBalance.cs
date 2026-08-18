@@ -6,6 +6,11 @@ public sealed record TransferredBalance
 {
     public Money Amount { get; }
 
+    private TransferredBalance()
+    {
+        Amount = null!;
+    }
+
     private TransferredBalance(Money amount)
     {
         Amount = amount;

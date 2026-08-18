@@ -1,6 +1,7 @@
 using Beridian.Domain.Common;
 using Beridian.Domain.Expenses;
 using Beridian.Domain.FinancialPeriods;
+using Beridian.Domain.FinancialPeriods.Exceptions;
 using Beridian.Domain.Incomes;
 using Beridian.Domain.Investments;
 
@@ -36,8 +37,7 @@ public sealed class FinancialPeriodClosingTests
 
         financialPeriod.AddExpense(RecurringExpense.Create("Electricity", Money.Create(50_000m, Currency.Clp)));
 
-        Assert.Throws<InvalidOperationException>(
-            () => financialPeriod.Close());
+        Assert.Throws<FinancialPeriodCannotBeClosedException>(() => financialPeriod.Close());
 
         Assert.Equal(FinancialPeriodStatus.Open, financialPeriod.Status);
     }
@@ -49,8 +49,7 @@ public sealed class FinancialPeriodClosingTests
 
         financialPeriod.AddIncome(Income.Create("Salary", Money.Create(1_500_000m, Currency.Clp)));
 
-        Assert.Throws<InvalidOperationException>(
-            () => financialPeriod.Close());
+        Assert.Throws<FinancialPeriodCannotBeClosedException>(() => financialPeriod.Close());
 
         Assert.Equal(
             FinancialPeriodStatus.Open,
@@ -78,8 +77,7 @@ public sealed class FinancialPeriodClosingTests
 
         financialPeriod.Close();
 
-        Assert.Throws<InvalidOperationException>(
-            () => financialPeriod.Close());
+        Assert.Throws<FinancialPeriodCannotBeClosedException>(() => financialPeriod.Close());
     }
 
     [Fact]
@@ -91,8 +89,7 @@ public sealed class FinancialPeriodClosingTests
 
         var expense = RecurringExpense.Create("Electricity", Money.Create(50_000m, Currency.Clp));
 
-        Assert.Throws<InvalidOperationException>(
-            () => financialPeriod.AddExpense(expense));
+        Assert.Throws<FinancialPeriodCannotBeClosedException>(() => financialPeriod.AddExpense(expense));
     }
 
     [Fact]
@@ -104,8 +101,7 @@ public sealed class FinancialPeriodClosingTests
 
         var income = Income.Create("Salary", Money.Create(1_500_000m, Currency.Clp));
 
-        Assert.Throws<InvalidOperationException>(
-            () => financialPeriod.AddIncome(income));
+        Assert.Throws<FinancialPeriodCannotBeClosedException>(() => financialPeriod.AddIncome(income));
     }
 
     [Fact]
@@ -117,7 +113,7 @@ public sealed class FinancialPeriodClosingTests
 
         var investment = Investment.Create("Monthly Savings", Money.Create(250_000m, Currency.Clp));
 
-        Assert.Throws<InvalidOperationException>(
+        Assert.Throws<FinancialPeriodCannotBeClosedException>(
             () => financialPeriod.AddInvestment(investment));
     }
 

@@ -1,8 +1,10 @@
 using Beridian.Application.Expenses.EnterExpenseUsingDetails;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Application.Tests.TestDoubles;
 using Beridian.Domain.Common;
 using Beridian.Domain.Expenses;
 using Beridian.Domain.FinancialPeriods;
+using Beridian.Domain.FinancialPeriods.Exceptions;
 
 namespace Beridian.Application.Tests.Expenses.EnterExpenseUsingDetails;
 
@@ -67,7 +69,7 @@ public sealed class EnterExpenseUsingDetailsHandlerTests
         var command = new EnterExpenseUsingDetailsCommand(Guid.NewGuid(), expense.Id);
 
         //Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodNotFoundException>(() => handler.HandleAsync(command));
 
         Assert.Null(repository.UpdatedFinancialPeriod);
     }
@@ -101,7 +103,7 @@ public sealed class EnterExpenseUsingDetailsHandlerTests
         var command = new EnterExpenseUsingDetailsCommand(financialPeriod.Id, expense.Id);
 
         // Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodCannotBeClosedException>(() => handler.HandleAsync(command));
 
         Assert.Null(repository.UpdatedFinancialPeriod);
 

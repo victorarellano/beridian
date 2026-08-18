@@ -1,4 +1,5 @@
 using Beridian.Application.Abstractions.Persistence;
+using Beridian.Application.FinancialPeriods.Exceptions;
 
 namespace Beridian.Application.Expenses.EnterExpenseUsingDetails;
 
@@ -22,7 +23,7 @@ public sealed class EnterExpenseUsingDetailsHandler
 
         if (financialPeriod is null)
         {
-            throw new InvalidOperationException("Financial period was not found.");
+            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);;
         }
 
         financialPeriod.EnterExpense(command.ExpenseId);

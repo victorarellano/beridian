@@ -1,4 +1,5 @@
 using Beridian.Application.Abstractions.Persistence;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Domain.Common;
 using Beridian.Domain.Expenses;
 
@@ -20,15 +21,11 @@ public sealed class AddExpenseDetailHandler
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        var financialPeriod =
-            await _repository.GetByIdAsync(
-                command.FinancialPeriodId,
-                cancellationToken);
+        var financialPeriod = await _repository.GetByIdAsync(command.FinancialPeriodId, cancellationToken);
 
         if (financialPeriod is null)
         {
-            throw new InvalidOperationException(
-                "Financial period was not found.");
+            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);
         }
 
         var plannedAmount = command.PlannedAmount.HasValue

@@ -1,5 +1,6 @@
 using Beridian.Application.Abstractions.Events;
 using Beridian.Application.Abstractions.Persistence;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Domain.Services;
 
 namespace Beridian.Application.FinancialPeriods.GenerateNextFinancialPeriod;
@@ -29,7 +30,7 @@ public sealed class GenerateNextFinancialPeriodHandler
 
         if (currentPeriod is null)
         {
-            throw new InvalidOperationException("Financial period was not found.");
+            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);;
         }
 
         var nextPeriod = _generator.Generate(currentPeriod);

@@ -1,8 +1,10 @@
 using Beridian.Application.Expenses.AddFixedTermExpense;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Application.Tests.TestDoubles;
 using Beridian.Domain.Common;
 using Beridian.Domain.Expenses;
 using Beridian.Domain.FinancialPeriods;
+using Beridian.Domain.FinancialPeriods.Exceptions;
 
 namespace Beridian.Application.Tests.Expenses.AddFixedTermExpense;
 
@@ -48,7 +50,7 @@ public sealed class AddFixedTermExpenseHandlerTest
         var command = new AddFixedTermExpenseCommand(Guid.NewGuid(), "Celular 8de12", Money.Create(54000, Currency.Clp), 8, 12);
 
         //Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodNotFoundException>(() => handler.HandleAsync(command));
 
         Assert.Null(repository.UpdatedFinancialPeriod);
     }
@@ -68,7 +70,7 @@ public sealed class AddFixedTermExpenseHandlerTest
         var command = new AddFixedTermExpenseCommand(financialPeriod.Id, "Celular 8de12", Money.Create(54000, Currency.Clp), 8, 12);
 
         //Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodCannotBeClosedException>(() => handler.HandleAsync(command));
         Assert.Empty(financialPeriod.Expenses);
         Assert.Null(repository.UpdatedFinancialPeriod);
     }

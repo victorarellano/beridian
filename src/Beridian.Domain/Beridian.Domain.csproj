@@ -7,6 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Beridian.Tests" />
+    <InternalsVisibleTo Include="Beridian.Domain.Tests" />
   </ItemGroup> 
 </Project>

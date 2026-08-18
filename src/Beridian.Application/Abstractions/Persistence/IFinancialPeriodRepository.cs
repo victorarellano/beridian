@@ -7,5 +7,7 @@ public interface IFinancialPeriodRepository
 
     Task AddAsync(FinancialPeriod financialPeriod, CancellationToken cancellationToken = default);
 
+    Task<bool> ExistsByPeriodAsync(Period period, CancellationToken cancellationToken = default);
+
     Task UpdateAsync(FinancialPeriod financialPeriod, CancellationToken cancellationToken = default);
 }

@@ -1,6 +1,7 @@
 using Beridian.Domain.Common;
 using Beridian.Domain.Expenses;
 using Beridian.Domain.FinancialPeriods;
+using Beridian.Domain.FinancialPeriods.Exceptions;
 using Beridian.Domain.Incomes;
 using Beridian.Domain.Investments;
 
@@ -59,10 +60,7 @@ public sealed class FinancialPeriodOperationTests
 
         financialPeriod.Close();
 
-        Assert.Throws<InvalidOperationException>(
-            () => financialPeriod.EnterIncome(
-                income.Id,
-                Money.Create(1_520_000m, Currency.Clp)));
+        Assert.Throws<FinancialPeriodCannotBeClosedException>(() => financialPeriod.EnterIncome(income.Id, Money.Create(1_520_000m, Currency.Clp)));
     }
 
     [Fact]
@@ -72,8 +70,7 @@ public sealed class FinancialPeriodOperationTests
 
         var externalIncome = Income.Create("External income", Money.Create(100_000m, Currency.Clp));
 
-        Assert.Throws<InvalidOperationException>(
-            () => financialPeriod.EnterIncome(externalIncome.Id, Money.Create(100_000m, Currency.Clp)));
+        Assert.Throws<InvalidOperationException>(() => financialPeriod.EnterIncome(externalIncome.Id, Money.Create(100_000m, Currency.Clp)));
     }
 
     private static FinancialPeriod CreateFinancialPeriod()

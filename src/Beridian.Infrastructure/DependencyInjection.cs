@@ -1,3 +1,9 @@
+using Beridian.Application.Abstractions.Events;
+using Beridian.Application.Abstractions.Persistence;
+using Beridian.Infrastructure.Events;
+using Beridian.Infrastructure.Persistence;
+using Beridian.Infrastructure.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +15,17 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        //services.AddScoped<IDebtRepository, DebtRepository>();
+        var connectionString =
+            configuration.GetConnectionString("Database")
+            ?? throw new InvalidOperationException(
+                "The database connection string was not configured.");
+
+        services.AddDbContext<BeridianDbContext>(
+            options => options.UseNpgsql(connectionString));
+
+        services.AddScoped<IFinancialPeriodRepository, FinancialPeriodRepository>();            
+        services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+
         return services;
     }
 }

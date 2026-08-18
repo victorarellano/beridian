@@ -1,5 +1,6 @@
 using Beridian.Domain.Expenses;
 using Beridian.Domain.FinancialPeriods.Events;
+using Beridian.Domain.FinancialPeriods.Exceptions;
 using Beridian.Domain.Incomes;
 
 namespace Beridian.Domain.FinancialPeriods;
@@ -12,12 +13,12 @@ public sealed partial class FinancialPeriod
 
         if (_expenses.Any(expense => expense.Status != ExpenseStatus.Entered))
         {
-            throw new InvalidOperationException("The financial period cannot be closed while expenses remain unentered.");
+            throw new FinancialPeriodCannotBeClosedException(Id, FinancialPeriodClosingFailureReason.UnenteredExpenses);            
         }
 
         if (_incomes.Any(income => income.Status != IncomeStatus.Entered))
         {
-            throw new InvalidOperationException("The financial period cannot be closed while incomes remain unentered.");
+            throw new FinancialPeriodCannotBeClosedException(Id, FinancialPeriodClosingFailureReason.UnenteredIncomes);            
         }
 
         Status = FinancialPeriodStatus.Closed;

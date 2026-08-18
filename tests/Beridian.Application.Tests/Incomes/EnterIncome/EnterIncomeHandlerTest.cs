@@ -3,6 +3,7 @@ using Beridian.Application.Incomes.EnterIncome;
 using Beridian.Application.Tests.TestDoubles;
 using Beridian.Domain.Common;
 using Beridian.Domain.FinancialPeriods;
+using Beridian.Domain.FinancialPeriods.Exceptions;
 using Beridian.Domain.Incomes;
 
 namespace Beridian.Application.Tests.Incomes.EnterIncome;
@@ -86,7 +87,7 @@ public sealed class EnterIncomeHandlerTests
         var command =  new EnterIncomeCommand(financialPeriod.Id, income.Id, 2_100_000m);
 
         //Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodCannotBeClosedException>(() => handler.HandleAsync(command));
         
         Assert.Null(repository.UpdatedFinancialPeriod);
 

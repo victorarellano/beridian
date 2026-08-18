@@ -2,10 +2,14 @@ namespace Beridian.Domain.FinancialPeriods;
 
 public sealed record Period
 {
-    public int Year { get; }
+    public int Year { get; private set; }
 
-    public int Month { get; }
+    public int Month { get; private set; }
 
+    private Period()
+    {
+    }
+    
     private Period(int year, int month)
     {
         Year = year;

@@ -1,4 +1,5 @@
 using Beridian.Application.FinancialPeriods.CloseFinancialPeriod;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Application.Tests.TestDoubles;
 using Beridian.Domain.FinancialPeriods;
 using Beridian.Domain.FinancialPeriods.Events;
@@ -45,7 +46,7 @@ public sealed class CloseFinancialPeriodHandlerTests
 
         var command = new CloseFinancialPeriodCommand(Guid.NewGuid());
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodNotFoundException>(() => handler.HandleAsync(command));
 
         Assert.Null(repository.UpdatedFinancialPeriod);
     }

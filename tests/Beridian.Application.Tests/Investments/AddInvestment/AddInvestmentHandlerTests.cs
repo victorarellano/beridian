@@ -1,6 +1,7 @@
 using Beridian.Application.Investments.AddInvestment;
 using Beridian.Application.Tests.TestDoubles;
 using Beridian.Domain.FinancialPeriods;
+using Beridian.Domain.FinancialPeriods.Exceptions;
 using Beridian.Domain.Investments;
 
 namespace Beridian.Application.Tests.Investments.AddInvestment;
@@ -68,8 +69,7 @@ public sealed class AddInvestmentHandlerTests
         // Arrange
         var repository = new FakeFinancialPeriodRepository();
 
-        var financialPeriod = FinancialPeriod.CreateInitial(
-            Period.Create(2026, 8));
+        var financialPeriod = FinancialPeriod.CreateInitial(Period.Create(2026, 8));
 
         financialPeriod.Close();
 
@@ -83,8 +83,7 @@ public sealed class AddInvestmentHandlerTests
             300_000m);
 
         // Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodCannotBeClosedException>(() => handler.HandleAsync(command));
 
         Assert.Null(repository.UpdatedFinancialPeriod);
         Assert.Empty(financialPeriod.Investments);

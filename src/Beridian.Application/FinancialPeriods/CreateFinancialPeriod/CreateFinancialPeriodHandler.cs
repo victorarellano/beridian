@@ -1,4 +1,5 @@
 using Beridian.Application.Abstractions.Persistence;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Domain.FinancialPeriods;
 
 namespace Beridian.Application.FinancialPeriods.CreateFinancialPeriod;
@@ -18,6 +19,12 @@ public sealed class CreateFinancialPeriodHandler
 
         var period = Period.Create(command.Year, command.Month);
 
+        var financialPeriodExists = await _repository.ExistsByPeriodAsync(period, cancellationToken);
+        if (financialPeriodExists)
+        {
+            throw new FinancialPeriodAlreadyExistsException(period.Year, period.Month);
+        }
+        
         var financialPeriod = FinancialPeriod.CreateInitial(period);
 
         await _repository.AddAsync(financialPeriod, cancellationToken);

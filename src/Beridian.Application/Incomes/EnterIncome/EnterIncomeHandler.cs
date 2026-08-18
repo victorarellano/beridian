@@ -1,4 +1,5 @@
 using Beridian.Application.Abstractions.Persistence;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Domain.Common;
 
 namespace Beridian.Application.Incomes.EnterIncome;
@@ -20,7 +21,7 @@ public sealed class EnterIncomeHandler
 
         if (financialPeriod is null)
         {
-            throw new InvalidOperationException("Financial period was not found.");
+            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);;
         }
 
         financialPeriod.EnterIncome(command.IncomeId, Money.Create(command.ActualAmount, Currency.Clp));

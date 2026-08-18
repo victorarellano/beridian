@@ -1,7 +1,9 @@
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Application.Investments.ConfirmInvestment;
 using Beridian.Application.Tests.TestDoubles;
 using Beridian.Domain.Common;
 using Beridian.Domain.FinancialPeriods;
+using Beridian.Domain.FinancialPeriods.Exceptions;
 using Beridian.Domain.Investments;
 
 namespace Beridian.Application.Tests.Investments.ConfirmInvestment;
@@ -49,7 +51,7 @@ public sealed class ConfirmInvestmentHandlerTests
         var command = new ConfirmInvestmentCommand(Guid.NewGuid(), Guid.NewGuid(), 280_000m);
 
         // Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodNotFoundException>(() => handler.HandleAsync(command));
 
         Assert.Null(repository.UpdatedFinancialPeriod);
     }
@@ -95,7 +97,7 @@ public sealed class ConfirmInvestmentHandlerTests
         var command = new ConfirmInvestmentCommand(financialPeriod.Id, investment.Id, 280_000m);
 
         // Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodCannotBeClosedException>(() => handler.HandleAsync(command));
 
         Assert.Null(repository.UpdatedFinancialPeriod);
 

@@ -2,6 +2,7 @@ using Beridian.Domain.Common;
 using Beridian.Domain.Events;
 using Beridian.Domain.Expenses;
 using Beridian.Domain.FinancialPeriods.Events;
+using Beridian.Domain.FinancialPeriods.Exceptions;
 using Beridian.Domain.Incomes;
 using Beridian.Domain.Investments;
 
@@ -79,7 +80,7 @@ public sealed partial class FinancialPeriod
     {
         if (Status == FinancialPeriodStatus.Closed)
         {
-            throw new InvalidOperationException("A closed financial period cannot be modified.");
+            throw new FinancialPeriodCannotBeClosedException(Id, FinancialPeriodClosingFailureReason.AlreadyClosed);
         }
     }
 

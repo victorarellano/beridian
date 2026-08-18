@@ -2,10 +2,14 @@ namespace Beridian.Domain.Common;
 
 public sealed record Money
 {
-    public decimal Amount { get; }
+    public decimal Amount { get; private set; }
 
-    public Currency Currency { get; }
+    public Currency Currency { get; private set;}
 
+    private Money()
+    {
+    }
+    
     private Money(decimal amount, Currency currency)
     {
         Amount = amount;

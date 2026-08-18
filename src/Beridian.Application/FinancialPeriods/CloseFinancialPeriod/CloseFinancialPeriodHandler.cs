@@ -1,5 +1,6 @@
 using Beridian.Application.Abstractions.Events;
 using Beridian.Application.Abstractions.Persistence;
+using Beridian.Application.FinancialPeriods.Exceptions;
 
 namespace Beridian.Application.FinancialPeriods.CloseFinancialPeriod;
 
@@ -20,12 +21,8 @@ public sealed class CloseFinancialPeriodHandler
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        var financialPeriod = await _repository.GetByIdAsync(command.FinancialPeriodId, cancellationToken);
-
-        if (financialPeriod is null)
-        {
-            throw new InvalidOperationException("Financial period was not found.");
-        }
+        var financialPeriod = await _repository.GetByIdAsync(command.FinancialPeriodId, cancellationToken)??
+            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);
 
         financialPeriod.Close();
 

@@ -1,4 +1,5 @@
 using Beridian.Application.FinancialPeriods.CreateFinancialPeriod;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Application.Tests.TestDoubles;
 using Beridian.Domain.FinancialPeriods;
 
@@ -44,4 +45,30 @@ public sealed class CreateFinancialPeriodHandlerTests
 
         Assert.Null(repository.AddedFinancialPeriod);
     }
+
+    [Fact]
+    public async Task HandleAsync_WhenFinancialPeriodAlreadyExists_ShouldThrowFinancialPeriodAlreadyExistsException()
+    {
+        // Arrange
+        var repository = new FakeFinancialPeriodRepository();
+
+        var existingFinancialPeriod = FinancialPeriod.CreateInitial(Period.Create(2026, 9));
+
+        repository.Seed(existingFinancialPeriod);
+
+        var handler = new CreateFinancialPeriodHandler(repository);
+
+        var command = new CreateFinancialPeriodCommand(2026, 9);
+
+        // Act
+        var action = async () => await handler.HandleAsync(command);
+
+        // Assert
+        var exception = await Assert.ThrowsAsync<FinancialPeriodAlreadyExistsException>(action);
+
+        Assert.Equal(2026, exception.Year);
+        Assert.Equal(9, exception.Month);
+        Assert.Null(repository.AddedFinancialPeriod);
+    }
+
 }

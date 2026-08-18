@@ -1,6 +1,7 @@
 using Beridian.Domain.Common;
 using Beridian.Domain.Expenses;
 using Beridian.Domain.FinancialPeriods;
+using Beridian.Domain.FinancialPeriods.Exceptions;
 
 namespace Beridian.Domain.Tests.FinancialPeriods.Operations;
 
@@ -82,8 +83,7 @@ public sealed class FinancialPeriodExpenseDetailTests
 
         var detail = CreateDetail("Closed Period Expense", new DateOnly(2026, 8, 5));
 
-        Assert.Throws<InvalidOperationException>(
-            () => financialPeriod.AddExpenseDetail(expense.Id, detail));
+        Assert.Throws<FinancialPeriodCannotBeClosedException>(() => financialPeriod.AddExpenseDetail(expense.Id, detail));
     }
 
     private static FinancialPeriod CreateFinancialPeriod()

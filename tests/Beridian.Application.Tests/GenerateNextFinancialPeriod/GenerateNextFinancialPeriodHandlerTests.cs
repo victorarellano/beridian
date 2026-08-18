@@ -1,4 +1,5 @@
 using Beridian.Application.FinancialPeriods.CreateFinancialPeriod;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Application.FinancialPeriods.GenerateNextFinancialPeriod;
 using Beridian.Application.Tests.TestDoubles;
 using Beridian.Domain.FinancialPeriods;
@@ -53,7 +54,7 @@ public sealed class GenerateNextFinancialPeriodHandlerTests
 
         var command = new GenerateNextFinancialPeriodCommand(Guid.NewGuid());
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodNotFoundException>(() => handler.HandleAsync(command));
 
         Assert.Null(repository.AddedFinancialPeriod);
     }

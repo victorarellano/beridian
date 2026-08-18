@@ -1,4 +1,5 @@
 using Beridian.Application.Abstractions.Persistence;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Domain.Common;
 
 namespace Beridian.Application.Investments.ConfirmInvestment;
@@ -16,12 +17,11 @@ public sealed class ConfirmInvestmentHandler
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        var financialPeriod = await _repository.GetByIdAsync(
-                command.FinancialPeriodId, cancellationToken);
+        var financialPeriod = await _repository.GetByIdAsync(command.FinancialPeriodId, cancellationToken);
 
         if (financialPeriod is null)
         {
-            throw new InvalidOperationException("Financial period was not found.");
+            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);;
         }
 
         financialPeriod.ConfirmInvestment(command.InvestmentId, Money.Create(command.ActualAmount, Currency.Clp));

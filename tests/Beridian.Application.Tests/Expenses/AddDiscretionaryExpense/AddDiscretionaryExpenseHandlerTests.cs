@@ -1,7 +1,9 @@
 using Beridian.Application.Expenses.AddDiscretionaryExpense;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Application.Tests.TestDoubles;
 using Beridian.Domain.Expenses;
 using Beridian.Domain.FinancialPeriods;
+using Beridian.Domain.FinancialPeriods.Exceptions;
 
 namespace Beridian.Application.Tests.Expenses.AddDiscretionaryExpense;
 
@@ -41,7 +43,7 @@ public sealed class AddDiscretionaryExpenseHandlerTests
 
         var command = new AddDiscretionaryExpenseCommand(Guid.NewGuid(), "Personal Expenses");
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodNotFoundException>(() => handler.HandleAsync(command));
 
         Assert.Null(repository.UpdatedFinancialPeriod);
     }
@@ -62,7 +64,7 @@ public sealed class AddDiscretionaryExpenseHandlerTests
 
         //Act & Assert
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodCannotBeClosedException>(() => handler.HandleAsync(command));
         Assert.Empty(financialPeriod.Expenses);
         Assert.Null(repository.UpdatedFinancialPeriod);
     }

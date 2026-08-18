@@ -1,6 +1,6 @@
 namespace Beridian.Domain.Common;
 
-public enum Currency
+public enum Currency : short
 {
     Clp = 1
 }
