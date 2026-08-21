@@ -10,10 +10,8 @@ public static class CreateFinancialPeriodEndpoint
         group.MapPost("/", HandleAsync)
             .MapToApiVersion(ApiVersions.V1)
             .WithName("CreateFinancialPeriodV1")
-            .Produces<CreateFinancialPeriodResult>(
-                StatusCodes.Status201Created)
-            .ProducesProblem(
-                StatusCodes.Status409Conflict);
+            .Produces<CreateFinancialPeriodResult>(StatusCodes.Status201Created)
+            .ProducesProblem(StatusCodes.Status409Conflict);
     }
 
     private static async Task<Created<CreateFinancialPeriodResult>> HandleAsync(

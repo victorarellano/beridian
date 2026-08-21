@@ -64,7 +64,7 @@ public sealed class AddDiscretionaryExpenseHandlerTests
 
         //Act & Assert
 
-        await Assert.ThrowsAsync<FinancialPeriodCannotBeClosedException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodClosedException>(() => handler.HandleAsync(command));
         Assert.Empty(financialPeriod.Expenses);
         Assert.Null(repository.UpdatedFinancialPeriod);
     }

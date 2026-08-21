@@ -1,5 +1,6 @@
 using Beridian.Domain.Common;
 using Beridian.Domain.Expenses;
+using Beridian.Domain.Expenses.Exceptions;
 
 namespace Beridian.Domain.Tests.Expenses.Entering;
 
@@ -39,8 +40,7 @@ public sealed class ExpenseEnteringTests
     {
         var expense = CreateExpense();
 
-        Assert.Throws<InvalidOperationException>(
-            () => expense.Enter());
+        Assert.Throws<ExpenseHasDetailsException>(() => expense.Enter());
     }
 
     [Fact]
@@ -51,21 +51,17 @@ public sealed class ExpenseEnteringTests
         expense.AddDetail(
             ExpenseDetail.Create("Lunch", Money.Create(15000m, Currency.Clp), new DateOnly(2026, 8, 5)));
 
-        Assert.Throws<InvalidOperationException>(
-            () => expense.Enter(
-                Money.Create(20000m, Currency.Clp)));
+        Assert.Throws<ExpenseHasDetailsException>(() => expense.Enter(Money.Create(20000m, Currency.Clp)));
     }
 
     [Fact]
-    public void Enter_WhenAlreadyEntered_ShouldThrowInvalidOperationException()
+    public void Enter_WhenAlreadyEntered_ShouldThrowExpenseAlreadyEnteredException()
     {
         var expense = CreateExpense();
 
         expense.Enter(Money.Create(45000m, Currency.Clp));
 
-        Assert.Throws<InvalidOperationException>(
-            () => expense.Enter(
-                Money.Create(46000m, Currency.Clp)));
+        Assert.Throws<ExpenseAlreadyEnteredException>(() => expense.Enter(Money.Create(46000m, Currency.Clp)));
     }
 
     [Fact]

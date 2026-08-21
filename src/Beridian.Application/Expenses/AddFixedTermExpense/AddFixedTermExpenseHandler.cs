@@ -25,7 +25,8 @@ public sealed class AddFixedTermExpenseHandler
             throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);
         }
 
-        var expense = FixedTermExpense.Create(command.Name, command.plannedAmmount, command.currentInstallment, command.totalInstallments);
+    
+        var expense = FixedTermExpense.Create(command.Name, Money.Create(command.PlannedAmount, Currency.Clp), command.CurrentInstallment, command.TotalInstallments);
 
         financialPeriod.AddExpense(expense);
 

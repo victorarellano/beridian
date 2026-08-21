@@ -9,12 +9,9 @@ public sealed class FinancialPeriodGenerator
     {
         ArgumentNullException.ThrowIfNull(currentPeriod);
 
-        var transferredBalance = TransferredBalance.Create(
-            currentPeriod.ActualBalance);
+        var transferredBalance = TransferredBalance.Create(currentPeriod.ActualBalance);
 
-        var nextPeriod = FinancialPeriod.Create(
-            currentPeriod.Period.Next(),
-            transferredBalance);
+        var nextPeriod = FinancialPeriod.Create(currentPeriod.Period.Next(), transferredBalance);
 
         CopyIncomes(currentPeriod, nextPeriod);
         CopyExpenses(currentPeriod, nextPeriod);
@@ -28,8 +25,7 @@ public sealed class FinancialPeriodGenerator
     {
         foreach (var income in currentPeriod.Incomes)
         {
-            nextPeriod.AddIncome(
-                income.CopyToNextPeriod());
+            nextPeriod.AddIncome(income.CopyToNextPeriod());
         }
     }
 

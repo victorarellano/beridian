@@ -77,7 +77,7 @@ public sealed class FinancialPeriodClosingTests
 
         financialPeriod.Close();
 
-        Assert.Throws<FinancialPeriodCannotBeClosedException>(() => financialPeriod.Close());
+        Assert.Throws<FinancialPeriodClosedException>(() => financialPeriod.Close());
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public sealed class FinancialPeriodClosingTests
 
         var expense = RecurringExpense.Create("Electricity", Money.Create(50_000m, Currency.Clp));
 
-        Assert.Throws<FinancialPeriodCannotBeClosedException>(() => financialPeriod.AddExpense(expense));
+        Assert.Throws<FinancialPeriodClosedException>(() => financialPeriod.AddExpense(expense));
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public sealed class FinancialPeriodClosingTests
 
         var income = Income.Create("Salary", Money.Create(1_500_000m, Currency.Clp));
 
-        Assert.Throws<FinancialPeriodCannotBeClosedException>(() => financialPeriod.AddIncome(income));
+        Assert.Throws<FinancialPeriodClosedException>(() => financialPeriod.AddIncome(income));
     }
 
     [Fact]
@@ -113,13 +113,11 @@ public sealed class FinancialPeriodClosingTests
 
         var investment = Investment.Create("Monthly Savings", Money.Create(250_000m, Currency.Clp));
 
-        Assert.Throws<FinancialPeriodCannotBeClosedException>(
-            () => financialPeriod.AddInvestment(investment));
+        Assert.Throws<FinancialPeriodClosedException>(() => financialPeriod.AddInvestment(investment));
     }
 
     private static FinancialPeriod CreateFinancialPeriod()
     {
-        return FinancialPeriod.CreateInitial(
-            Period.Create(2026, 8));
+        return FinancialPeriod.CreateInitial(Period.Create(2026, 8));
     }
 }

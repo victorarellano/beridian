@@ -105,7 +105,7 @@ public sealed class AddExpenseDetailHandlerTest
         var handler = new AddExpenseDetailHandler(repository);
         var command = new AddExpenseDetailCommand(financialPeriod.Id, Guid.NewGuid(), "Lunch", 15_000m);
 
-        await Assert.ThrowsAsync<FinancialPeriodCannotBeClosedException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodClosedException>(() => handler.HandleAsync(command));
 
         Assert.Null(repository.UpdatedFinancialPeriod);
 

@@ -23,7 +23,7 @@ public sealed class EnterExpenseUsingDetailsHandler
 
         if (financialPeriod is null)
         {
-            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);;
+            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);
         }
 
         financialPeriod.EnterExpense(command.ExpenseId);

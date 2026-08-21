@@ -1,5 +1,6 @@
 using Beridian.Domain.Common;
 using Beridian.Domain.Investments;
+using Beridian.Domain.Investments.Exceptions;
 
 namespace Beridian.Domain.Tests.Investments.Confirmation;
 
@@ -36,8 +37,7 @@ public sealed class InvestmentConfirmationTests
 
         investment.Confirm(Money.Create(220_000m, Currency.Clp));
 
-        Assert.Throws<InvalidOperationException>(
-            () => investment.Confirm(Money.Create(230_000m, Currency.Clp)));
+        Assert.Throws<InvestmentAlreadyConfirmedException>(() => investment.Confirm(Money.Create(230_000m, Currency.Clp)));
     }
 
     private static Investment CreateInvestment()

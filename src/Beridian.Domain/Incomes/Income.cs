@@ -1,4 +1,5 @@
 using Beridian.Domain.Common;
+using Beridian.Domain.Incomes.Exceptions;
 
 namespace Beridian.Domain.Incomes;
 
@@ -34,18 +35,14 @@ public sealed class Income
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException(
-                "Income name cannot be empty.",
-                nameof(name));
+            throw new ArgumentException("Income name cannot be empty.", nameof(name));
         }
 
         ArgumentNullException.ThrowIfNull(plannedAmount);
 
         if (plannedAmount.Amount < 0)
         {
-            throw new ArgumentOutOfRangeException(
-                nameof(plannedAmount),
-                "Planned income amount cannot be negative.");
+            throw new ArgumentOutOfRangeException(nameof(plannedAmount), "Planned income amount cannot be negative.");
         }
 
         return new Income(Guid.NewGuid(), name.Trim(), plannedAmount);
@@ -57,21 +54,18 @@ public sealed class Income
 
         if (Status == IncomeStatus.Entered)
         {
-            throw new InvalidOperationException(
-                "The income has already been entered.");
+             throw new IncomeAlreadyEnteredException(Id);
         }
 
         if (actualAmount.Amount < 0)
         {
             throw new ArgumentOutOfRangeException(
-                nameof(actualAmount),
-                "Actual income amount cannot be negative.");
+                nameof(actualAmount), "Actual income amount cannot be negative.");
         }
 
         if (actualAmount.Currency != PlannedAmount.Currency)
         {
-            throw new InvalidOperationException(
-                "Actual amount currency must match the income currency.");
+            throw new InvalidOperationException("Actual amount currency must match the income currency.");
         }
 
         ActualAmount = actualAmount;

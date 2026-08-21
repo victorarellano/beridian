@@ -21,7 +21,7 @@ public sealed class ConfirmInvestmentHandler
 
         if (financialPeriod is null)
         {
-            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);;
+            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);
         }
 
         financialPeriod.ConfirmInvestment(command.InvestmentId, Money.Create(command.ActualAmount, Currency.Clp));

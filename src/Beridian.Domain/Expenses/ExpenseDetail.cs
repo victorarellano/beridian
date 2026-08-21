@@ -29,18 +29,14 @@ public sealed class ExpenseDetail
     {
         if (string.IsNullOrWhiteSpace(description))
         {
-            throw new ArgumentException(
-                "Expense detail description cannot be empty.",
-                nameof(description));
+            throw new ArgumentException("Expense detail description cannot be empty.", nameof(description));
         }
 
         ArgumentNullException.ThrowIfNull(actualAmount);
 
         if (actualAmount.Amount < 0)
         {
-            throw new ArgumentOutOfRangeException(
-                nameof(actualAmount),
-                "Expense detail actual amount cannot be negative.");
+            throw new ArgumentOutOfRangeException(nameof(actualAmount), "Expense detail actual amount cannot be negative.");
         }
 
         if (plannedAmount is not null)
@@ -48,14 +44,12 @@ public sealed class ExpenseDetail
             if (plannedAmount.Amount < 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(plannedAmount),
-                    "Expense detail planned amount cannot be negative.");
+                    nameof(plannedAmount), "Expense detail planned amount cannot be negative.");
             }
 
             if (plannedAmount.Currency != actualAmount.Currency)
             {
-                throw new InvalidOperationException(
-                    "Planned and actual amounts must use the same currency.");
+                throw new InvalidOperationException("Planned and actual amounts must use the same currency.");
             }
         }
 

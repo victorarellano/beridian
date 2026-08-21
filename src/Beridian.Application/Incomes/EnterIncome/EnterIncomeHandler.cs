@@ -21,7 +21,7 @@ public sealed class EnterIncomeHandler
 
         if (financialPeriod is null)
         {
-            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);;
+            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);
         }
 
         financialPeriod.EnterIncome(command.IncomeId, Money.Create(command.ActualAmount, Currency.Clp));

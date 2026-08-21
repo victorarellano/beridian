@@ -1,8 +1,11 @@
 
 using Beridian.Domain.Common;
 using Beridian.Domain.Expenses;
+using Beridian.Domain.Expenses.Exceptions;
 using Beridian.Domain.Incomes;
+using Beridian.Domain.Incomes.Exceptions;
 using Beridian.Domain.Investments;
+using Beridian.Domain.Investments.Exceptions;
 
 namespace Beridian.Domain.FinancialPeriods;
 
@@ -18,7 +21,12 @@ public sealed partial class FinancialPeriod
 
         if (detail.TransactionDate.HasValue && !Period.Contains(detail.TransactionDate.Value))
         {
-            throw new InvalidOperationException("Expense detail date must belong to the financial period.");
+            throw new ExpenseDetailDateOutsideFinancialPeriodException(
+                Id,
+                expenseId,
+                detail.TransactionDate.Value,
+                Period.Year,
+                Period.Month);
         }
 
         expense.AddDetail(detail);
@@ -60,16 +68,16 @@ public sealed partial class FinancialPeriod
     private Expense FindExpense(Guid expenseId)
     {
         return _expenses.SingleOrDefault(expense => expense.Id == expenseId) ??
-            throw new InvalidOperationException("The expense does not belong to this financial period.");
+            throw new ExpenseNotFoundInFinancialPeriodException(Id, expenseId);
     }
     private Income FindIncome(Guid incomeId)
     {
         return _incomes.SingleOrDefault(income => income.Id == incomeId) ??
-            throw new InvalidOperationException("The income does not belong to this financial period.");
+            throw new IncomeNotFoundInFinancialPeriodException(Id, incomeId);
     }
     private Investment FindInvestment(Guid investmentId)
     {
         return _investments.SingleOrDefault(investment => investment.Id == investmentId) ??
-        throw new InvalidOperationException("The investment does not belong to this financial period.");
+        throw new InvestmentNotFoundInFinancialPeriodException(Id, investmentId);
     }
 }

@@ -11,12 +11,9 @@ public static class CloseFinancialPeriodEndpoint
         group.MapPost("/{financialPeriodId:guid}/close", HandleAsync)
             .MapToApiVersion(ApiVersions.V1)
             .WithName("CloseFinancialPeriodV1")
-            .Produces<CloseFinancialPeriodResult>(
-                StatusCodes.Status200OK)
-            .ProducesProblem(
-                StatusCodes.Status404NotFound)
-            .ProducesProblem(
-                StatusCodes.Status409Conflict);
+            .Produces<CloseFinancialPeriodResult>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status409Conflict);
     }
 
     private static async Task<Ok<CloseFinancialPeriodResult>> HandleAsync(

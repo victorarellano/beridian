@@ -17,7 +17,6 @@ public sealed class FinancialPeriodCannotBeClosedException : InvalidOperationExc
     {
         return reason switch
         {
-            FinancialPeriodClosingFailureReason.AlreadyClosed => "The financial period is already closed.",
             FinancialPeriodClosingFailureReason.UnenteredExpenses => "The financial period cannot be closed while expenses remain unentered.",
             FinancialPeriodClosingFailureReason.UnenteredIncomes => "The financial period cannot be closed while incomes remain unentered.",
             _ => throw new ArgumentOutOfRangeException(

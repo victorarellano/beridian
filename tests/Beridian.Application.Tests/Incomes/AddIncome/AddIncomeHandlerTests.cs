@@ -52,7 +52,7 @@ public sealed class AddIncomeHandlerTests
         var command = new AddIncomeCommand(financialPeriod.Id, "Sueldo Agosto", 2_000_000m);
 
         // Act & Assert
-        await Assert.ThrowsAsync<FinancialPeriodCannotBeClosedException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodClosedException>(() => handler.HandleAsync(command));
 
         Assert.Null(repository.UpdatedFinancialPeriod);
     }

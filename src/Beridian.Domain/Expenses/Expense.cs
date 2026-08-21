@@ -1,4 +1,5 @@
 using Beridian.Domain.Common;
+using Beridian.Domain.Expenses.Exceptions;
 
 namespace Beridian.Domain.Expenses;
 
@@ -75,7 +76,7 @@ public abstract class Expense
 
         if (_details.Count > 0)
         {
-            throw new InvalidOperationException("An expense with details must be entered using its detail amounts.");
+            throw new ExpenseHasDetailsException(Id);            
         }
 
         if (actualAmount.Amount < 0)
@@ -98,7 +99,7 @@ public abstract class Expense
 
         if (_details.Count == 0)
         {
-            throw new InvalidOperationException("An expense without details requires an actual amount.");
+            throw new ExpenseHasDetailsException(Id);
         }
 
         ActualAmount = CalculateActualAmount();
@@ -111,7 +112,7 @@ public abstract class Expense
     {
         if (Status == ExpenseStatus.Entered)
         {
-            throw new InvalidOperationException("The expense has already been entered.");
+            throw new ExpenseAlreadyEnteredException(Id);
         }
     }
 

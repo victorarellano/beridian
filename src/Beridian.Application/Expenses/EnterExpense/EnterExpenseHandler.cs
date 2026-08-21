@@ -1,4 +1,5 @@
 using Beridian.Application.Abstractions.Persistence;
+using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Domain.Common;
 
 namespace Beridian.Application.Expenses.EnterExpense;
@@ -18,24 +19,16 @@ public sealed class EnterExpenseHandler
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        var financialPeriod = await
-            _repository.GetByIdAsync(
-                command.FinancialPeriodId,
-                cancellationToken);
+        var financialPeriod = await _repository.GetByIdAsync(command.FinancialPeriodId, cancellationToken);
 
         if (financialPeriod is null)
         {
-            throw new InvalidOperationException("Financial Period was not found");
+            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);
         }
 
-        financialPeriod.EnterExpense(
-            command.ExpenseId,
-            Money.Create(command.ActualAmount,
-                Currency.Clp));
+        financialPeriod.EnterExpense(command.ExpenseId, Money.Create(command.ActualAmount, Currency.Clp));
 
-        await _repository.UpdateAsync(
-            financialPeriod,
-            cancellationToken);
+        await _repository.UpdateAsync(financialPeriod, cancellationToken);
 
         return new EnterExpenseResult(command.ExpenseId);
     }

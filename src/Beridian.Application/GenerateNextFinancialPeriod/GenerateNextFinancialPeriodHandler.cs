@@ -26,11 +26,19 @@ public sealed class GenerateNextFinancialPeriodHandler
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        var currentPeriod = await _repository.GetByIdAsync(command.FinancialPeriodId, cancellationToken);
+        var currentPeriod = 
+            await _repository.GetByIdAsync(
+                command.FinancialPeriodId, 
+                cancellationToken)?? 
+                throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);
 
-        if (currentPeriod is null)
+        var nextPeriodValue = currentPeriod.Period.Next();
+        var nextPeriodExists = await _repository.ExistsByPeriodAsync(nextPeriodValue, cancellationToken);
+        if (nextPeriodExists)
         {
-            throw new FinancialPeriodNotFoundException(command.FinancialPeriodId);;
+            throw new FinancialPeriodAlreadyExistsException(
+                nextPeriodValue.Year,
+                nextPeriodValue.Month);
         }
 
         var nextPeriod = _generator.Generate(currentPeriod);

@@ -1,5 +1,6 @@
 using Beridian.Domain.Common;
 using Beridian.Domain.Incomes;
+using Beridian.Domain.Incomes.Exceptions;
 
 namespace Beridian.Domain.Tests.Incomes.Entering;
 
@@ -36,7 +37,7 @@ public sealed class IncomeEnteringTests
 
         income.Enter(Money.Create(1_500_000m, Currency.Clp));
 
-        Assert.Throws<InvalidOperationException>(
+        Assert.Throws<IncomeAlreadyEnteredException>(
             () => income.Enter(Money.Create(1_520_000m, Currency.Clp)));
     }
 

@@ -2,6 +2,7 @@ using Beridian.Application.Expenses.EnterExpense;
 using Beridian.Application.Tests.TestDoubles;
 using Beridian.Domain.Common;
 using Beridian.Domain.Expenses;
+using Beridian.Domain.Expenses.Exceptions;
 using Beridian.Domain.FinancialPeriods;
 using Beridian.Domain.FinancialPeriods.Exceptions;
 
@@ -34,7 +35,7 @@ public sealed class EnterExpenseHandlerTest
 
         var updatedExpense = repository.UpdatedFinancialPeriod.Expenses.Single(x => x.Id == expense.Id);
 
-        Assert.Equal(expense.Id, result.expenseId);
+        Assert.Equal(expense.Id, result.ExpenseId);
         Assert.Equal(12_000m, updatedExpense.ActualAmount.Amount);
         Assert.Equal(ExpenseStatus.Entered, updatedExpense.Status);
     }
@@ -55,7 +56,7 @@ public sealed class EnterExpenseHandlerTest
 
         //Act & Assert
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<ExpenseNotFoundInFinancialPeriodException>(() => handler.HandleAsync(command));
         Assert.Null(repository.UpdatedFinancialPeriod);
     }
 
@@ -84,7 +85,7 @@ public sealed class EnterExpenseHandlerTest
         var command = new EnterExpenseCommand(financialPeriod.Id, Guid.NewGuid(), 12_000m);
 
         //Act & Assert
-        await Assert.ThrowsAsync<FinancialPeriodCannotBeClosedException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodClosedException>(() => handler.HandleAsync(command));
 
         Assert.Equal(48_000m, expense.ActualAmount.Amount);
         Assert.Null(repository.UpdatedFinancialPeriod);
@@ -122,8 +123,7 @@ public sealed class EnterExpenseHandlerTest
             20_000m);
 
         // Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<ExpenseHasDetailsException>( () => handler.HandleAsync(command));
 
         Assert.Equal(ExpenseStatus.Created, expense.Status);
         Assert.Null(repository.UpdatedFinancialPeriod);

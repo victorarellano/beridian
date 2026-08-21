@@ -21,7 +21,7 @@ public sealed class AddFixedTermExpenseHandlerTest
         repository.Seed(financialPeriod);
 
         var handler = new AddFixedTermExpenseHandler(repository);
-        var command = new AddFixedTermExpenseCommand(financialPeriod.Id, "Celular 8de12", Money.Create(54000, Currency.Clp), 8, 12);
+        var command = new AddFixedTermExpenseCommand(financialPeriod.Id, "Celular 8de12", 54_000m, 8, 12);
 
         //Act
         var result = await handler.HandleAsync(command);
@@ -47,7 +47,7 @@ public sealed class AddFixedTermExpenseHandlerTest
         var repository = new FakeFinancialPeriodRepository();
 
         var handler = new AddFixedTermExpenseHandler(repository);
-        var command = new AddFixedTermExpenseCommand(Guid.NewGuid(), "Celular 8de12", Money.Create(54000, Currency.Clp), 8, 12);
+        var command = new AddFixedTermExpenseCommand(Guid.NewGuid(), "Celular 8de12", 54_000m, 8, 12);
 
         //Act & Assert
         await Assert.ThrowsAsync<FinancialPeriodNotFoundException>(() => handler.HandleAsync(command));
@@ -67,10 +67,10 @@ public sealed class AddFixedTermExpenseHandlerTest
         repository.Seed(financialPeriod);
 
         var handler = new AddFixedTermExpenseHandler(repository);
-        var command = new AddFixedTermExpenseCommand(financialPeriod.Id, "Celular 8de12", Money.Create(54000, Currency.Clp), 8, 12);
+        var command = new AddFixedTermExpenseCommand(financialPeriod.Id, "Celular 8de12", 54_000m, 8, 12);
 
         //Act & Assert
-        await Assert.ThrowsAsync<FinancialPeriodCannotBeClosedException>(() => handler.HandleAsync(command));
+        await Assert.ThrowsAsync<FinancialPeriodClosedException>(() => handler.HandleAsync(command));
         Assert.Empty(financialPeriod.Expenses);
         Assert.Null(repository.UpdatedFinancialPeriod);
     }

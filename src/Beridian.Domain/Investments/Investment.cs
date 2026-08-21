@@ -1,4 +1,5 @@
 using Beridian.Domain.Common;
+using Beridian.Domain.Investments.Exceptions;
 
 namespace Beridian.Domain.Investments;
 
@@ -57,8 +58,7 @@ public sealed class Investment
 
         if (Status == InvestmentStatus.Confirmed)
         {
-            throw new InvalidOperationException(
-                "The investment has already been confirmed.");
+            throw new InvestmentAlreadyConfirmedException(Id);
         }
 
         if (actualAmount.Amount < 0)

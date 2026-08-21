@@ -13,9 +13,7 @@ public sealed class FinancialPeriodRepository : IFinancialPeriodRepository
         _dbContext = dbContext;
     }
 
-    public async Task<FinancialPeriod?> GetByIdAsync(
-        Guid id,
-        CancellationToken cancellationToken = default)
+    public async Task<FinancialPeriod?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dbContext.FinancialPeriods
             .Include(financialPeriod => financialPeriod.Expenses)
@@ -39,9 +37,7 @@ public sealed class FinancialPeriodRepository : IFinancialPeriodRepository
                     financialPeriod.Period.Month == period.Month,
                 cancellationToken);
     }
-    public async Task AddAsync(
-        FinancialPeriod financialPeriod,
-        CancellationToken cancellationToken = default)
+    public async Task AddAsync(FinancialPeriod financialPeriod, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(financialPeriod);
 
@@ -51,16 +47,13 @@ public sealed class FinancialPeriodRepository : IFinancialPeriodRepository
 
     }
 
-    public async Task UpdateAsync(
-        FinancialPeriod financialPeriod,
-        CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(FinancialPeriod financialPeriod, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(financialPeriod);
 
         if (_dbContext.Entry(financialPeriod).State == EntityState.Detached)
         {
-            throw new InvalidOperationException(
-                "The financial period must be loaded by this repository before it can be updated.");
+            throw new InvalidOperationException("The financial period must be loaded by this repository before it can be updated.");
         }
 
         await _dbContext.SaveChangesAsync(cancellationToken);

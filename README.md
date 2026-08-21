@@ -22,6 +22,86 @@ Build an intelligent personal finance platform that evolves from a traditional e
 
 ---
 
+## Architecture
+
+Beridian follows Clean Architecture and separates the solution into four main projects:
+
+```text
+src/
+├── Beridian.Api             HTTP endpoints, API versioning and exception handling
+├── Beridian.Application     Application use cases and persistence abstractions
+├── Beridian.Domain          Aggregates, entities, value objects and domain rules
+└── Beridian.Infrastructure  Entity Framework Core and PostgreSQL persistence
+```
+
+The main domain aggregate is `FinancialPeriod`. It protects the consistency of incomes, expenses, investments, balances and the financial-period lifecycle.
+
+Dependencies point toward the domain:
+
+```text
+Api -> Application
+Api -> Infrastructure
+Infrastructure -> Application
+Infrastructure -> Domain
+Application -> Domain
+```
+
+---
+
+## API
+
+The initial API is implemented with ASP.NET Core Minimal APIs and URL-based API versioning. Version 1 uses the following base route:
+
+```text
+/api/v1/financial-periods
+```
+
+### Financial Periods
+
+| Method | Route | Description |
+| --- | --- | --- |
+| `POST` | `/api/v1/financial-periods` | Create a financial period. |
+| `GET` | `/api/v1/financial-periods/{financialPeriodId}` | Get a financial period and its current composition. |
+| `POST` | `/api/v1/financial-periods/{financialPeriodId}/close` | Close a financial period. |
+| `POST` | `/api/v1/financial-periods/{financialPeriodId}/next` | Generate the next financial period. |
+
+### Incomes
+
+| Method | Route | Description |
+| --- | --- | --- |
+| `POST` | `/api/v1/financial-periods/{financialPeriodId}/incomes` | Add an income to an open financial period. |
+| `POST` | `/api/v1/financial-periods/{financialPeriodId}/incomes/{incomeId}/entry` | Enter the actual income amount. |
+
+### Expenses
+
+| Method | Route | Description |
+| --- | --- | --- |
+| `POST` | `/api/v1/financial-periods/{financialPeriodId}/expenses/recurring` | Add a recurring expense. |
+| `POST` | `/api/v1/financial-periods/{financialPeriodId}/expenses/fixed-term` | Add a fixed-term expense. |
+| `POST` | `/api/v1/financial-periods/{financialPeriodId}/expenses/discretionary` | Add a discretionary expense. |
+| `POST` | `/api/v1/financial-periods/{financialPeriodId}/expenses/{expenseId}/details` | Add a detail to an expense. |
+| `POST` | `/api/v1/financial-periods/{financialPeriodId}/expenses/{expenseId}/entry` | Enter an expense using an explicit actual amount. |
+| `POST` | `/api/v1/financial-periods/{financialPeriodId}/expenses/{expenseId}/entry-from-details` | Enter an expense using the sum of its details. |
+
+### Investments
+
+| Method | Route | Description |
+| --- | --- | --- |
+| `POST` | `/api/v1/financial-periods/{financialPeriodId}/investments` | Add an investment to an open financial period. |
+| `POST` | `/api/v1/financial-periods/{financialPeriodId}/investments/{investmentId}/confirmation` | Confirm an investment using its actual amount. |
+
+### OpenAPI
+
+When the API runs in the Development environment, Swagger UI is available at:
+
+```text
+/swagger
+```
+
+Application and domain exceptions are translated into RFC 7807 Problem Details responses. The API currently uses `400 Bad Request`, `404 Not Found` and `409 Conflict` to represent validation failures, missing resources and business-rule conflicts.
+
+---
+
 ## Prerequisites
 
 Before running the project, ensure the following tools are installed:
@@ -108,6 +188,16 @@ dotnet run --project src/Beridian.Api/Beridian.Api.csproj
 ```
 
 Use the URL displayed in the terminal to access the running API.
+
+### Run the Tests
+
+Run all automated tests from the solution root:
+
+```bash
+dotnet test
+```
+
+The solution contains unit tests for the Domain and Application layers and integration tests for Infrastructure persistence using PostgreSQL Testcontainers. The initial API endpoints were also verified manually through Swagger during Sprint 2.
 
 ### Stop the Local Database
 
@@ -571,4 +661,17 @@ This script is intended to automate the initial project setup and can be reused 
 
 ## Project Status
 
-🚧 Under Development
+**Sprint 2 — MVP Backend: Completed**
+
+The current backend milestone includes:
+
+- Clean Architecture solution structure.
+- Financial-period domain model and invariants.
+- Application use cases for financial periods, incomes, expenses and investments.
+- PostgreSQL persistence with Entity Framework Core migrations.
+- Infrastructure integration tests using PostgreSQL Testcontainers.
+- Versioned Minimal API endpoints with Swagger documentation.
+- Centralized Problem Details exception handling.
+- Manual verification of the initial API endpoints.
+
+Beridian remains under active development. Automated HTTP integration tests and update/delete operations are candidates for a future iteration and are not part of the current MVP backend scope.
