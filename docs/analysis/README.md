@@ -19,6 +19,7 @@ The documents contained in this folder describe the business independently of an
 | [Business Rules](./003-business-rules.md) | Defines the business rules governing the domain. |
 | [Domain Assumptions](./004-domain-assumptions.md)  | Records assumptions made during domain discovery. |
 | [Open Questions](./005-open-questions.md) | Tracks unresolved business questions and future discussions. |
+| [Financial Period User Flow](./006-financial-period-user-flow/README.md) | Describe Financial Period User Flow |
 
 ---
 

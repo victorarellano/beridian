@@ -67,7 +67,7 @@ Topics covered include:
 ### User Experience
 
 - Financial Period Dashboard
-- Financial Summary
+- Financial Summary(Telescopy for time)
 - Planned vs Actual visualization
 - Financial Balance visualization
 - Period Navigation
