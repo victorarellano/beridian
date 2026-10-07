@@ -15,7 +15,7 @@ An `Expense` always belongs to exactly one `FinancialPeriod`.
 An expense contains the following information:
 
 - expense category;
-- expense type;
+- specialized expense behavior (`RecurringExpense`, `FixedTermExpense`, or `DiscretionaryExpense`);
 - planned amount;
 - actual amount;
 - business state;
@@ -24,9 +24,11 @@ An expense contains the following information:
 When detail records exist, they belong exclusively to the owning expense.
 
 ```text
-Expense
+Expense <<abstract>>
+├── RecurringExpense
+├── FixedTermExpense
+├── DiscretionaryExpense
 ├── ExpenseCategory (reference)
-├── ExpenseType
 └── ExpenseDetails (optional)
 ```
 ---
@@ -53,7 +55,7 @@ The transition from **Created** to **Entered** occurs when the business consider
 
 - managing planned and actual amounts;
 - maintaining its business lifecycle;
-- classifying business behavior;
+- defining common expense behavior while specialized expense classes encapsulate type-specific behavior;
 - managing optional detail records;
 - calculating the actual amount from detail records;
 - protecting its own business invariants.
@@ -96,14 +98,14 @@ The planned amount represents the expected financial commitment and remains inde
 
 Actual execution may occur either directly on the expense or indirectly through its detail records.
 
-An expense distinguishes between category and type:
+An expense distinguishes between category and specialized behavior:
 
 - `ExpenseCategory` identifies what the expense represents, such as electricity, water, internet, or fuel.
-- `ExpenseType` defines how the expense behaves within the financial process.
+- Specialized expense classes (`RecurringExpense`, `FixedTermExpense`, and `DiscretionaryExpense`) define how the expense behaves within the financial process.
 
 `ExpenseCategory` is modeled as a configuration entity that can be referenced by multiple expenses across different financial periods.
 
-`ExpenseType` is currently considered a candidate Value Object. Its final modeling decision will be made when the Value Objects section is developed.
+Expense type is modeled through specialization rather than an `ExpenseType` value. This allows each subtype to encapsulate its own behavior without conditional logic based on expense type.
 
 The expense references an `ExpenseCategory`, but the category does not belong to the `FinancialPeriod` aggregate.
 
@@ -116,14 +118,18 @@ The expense references an `ExpenseCategory`, but the category does not belong to
 
 skinparam classAttributeIconSize 0
 
-class Expense
+abstract class Expense
+class RecurringExpense
+class FixedTermExpense
+class DiscretionaryExpense
 class ExpenseDetail
 class ExpenseCategory <<Configuration Entity>>
-class ExpenseType <<Candidate Value Object>>
 
+Expense <|-- RecurringExpense
+Expense <|-- FixedTermExpense
+Expense <|-- DiscretionaryExpense
 Expense "1" *-- "0..*" ExpenseDetail
 Expense "0..*" --> "1" ExpenseCategory
-Expense "1" *-- "1" ExpenseType
 
 @enduml
 ```

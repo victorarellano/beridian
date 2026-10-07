@@ -15,7 +15,8 @@ public static class ExceptionHandlerExtensions
             .Where(type => 
                 !type.IsAbstract && 
                 !type.IsInterface && 
-                type.IsAssignableTo(typeof(IExceptionHandler)));
+                type.IsAssignableTo(typeof(IExceptionHandler)) &&
+                type != typeof(UnhandledExceptionHandler));
 
         foreach (var handlerType in handlerTypes)
         {
@@ -23,6 +24,12 @@ public static class ExceptionHandlerExtensions
                 ServiceDescriptor.Singleton(typeof(IExceptionHandler), 
                 handlerType));
         }
+
+        services.TryAddEnumerable(
+            ServiceDescriptor.Singleton(
+                typeof(IExceptionHandler),
+                typeof(UnhandledExceptionHandler)));
+
         return services;
     }
 }

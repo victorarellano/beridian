@@ -11,18 +11,12 @@ namespace Beridian.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services,
-        IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString =
-            configuration.GetConnectionString("Database")
-            ?? throw new InvalidOperationException(
-                "The database connection string was not configured.");
+        var connectionString = configuration.GetConnectionString("Database")
+            ?? throw new InvalidOperationException("The database connection string was not configured.");
 
-        services.AddDbContext<BeridianDbContext>(
-            options => options.UseNpgsql(connectionString));
-
+        services.AddDbContext<BeridianDbContext>(options => options.UseNpgsql(connectionString));
         services.AddScoped<IFinancialPeriodRepository, FinancialPeriodRepository>();            
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 

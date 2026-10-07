@@ -11,14 +11,21 @@ public static class CreateFinancialPeriodEndpoint
             .MapToApiVersion(ApiVersions.V1)
             .WithName("CreateFinancialPeriodV1")
             .Produces<CreateFinancialPeriodResult>(StatusCodes.Status201Created)
+            .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status409Conflict);
     }
-
-    private static async Task<Created<CreateFinancialPeriodResult>> HandleAsync(
+    private static async Task<Results<Created<CreateFinancialPeriodResult>, ValidationProblem>> HandleAsync(
         CreateFinancialPeriodRequest request,
         CreateFinancialPeriodHandler handler,
         CancellationToken cancellationToken)
     {
+        var validationErrors = CreateFinancialPeriodRequestValidator.Validate(request);
+
+        if (validationErrors.Count > 0)
+        {
+            return TypedResults.ValidationProblem(validationErrors);
+        }        
+    
         var command = new CreateFinancialPeriodCommand(request.Year, request.Month);
         var result = await handler.HandleAsync(command, cancellationToken);
 

@@ -85,26 +85,26 @@ The investment operations available to the user will be defined in the investmen
 ## Conceptual Layout
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│                    FINANCIAL SUMMARY                        │
-│                                                             │
-│  Opening / Transferred Balance                              │
+┌──────────────────────────────────────────────────────────────┐
+│                    FINANCIAL SUMMARY                         │
+│                                                              │
+│  Opening / Transferred Balance                               │
 │  Planned Totals                     Actual Totals            │
 │  Planned Remaining Balance          Actual Remaining Balance │
-└─────────────────────────────────────────────────────────────┘
+└──────────────────────────────────────────────────────────────┘
+│  < >                                  |        |  Search     │
+┌────────────────────────────────┬─────────────────────────────┐
+│            EXPENSES            │           INCOMES           │
+│                                │                             │
+│  Planned │ Actual              │  Planned │ Actual           │
+│  Expense details → popup       │                             │
+└────────────────────────────────┴─────────────────────────────┘
 
-┌────────────────────────────────┬────────────────────────────┐
-│            EXPENSES            │           INCOMES          │
-│                                │                            │
-│  Planned │ Actual              │  Planned │ Actual          │
-│  Expense details → popup       │                            │
-└────────────────────────────────┴────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│                         INVESTMENT                          │
-│                                                             │
-│             Planned Amount │ Actual Amount                  │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                         INVESTMENT                           │
+│                                                              │
+│             Planned Amount │ Actual Amount                   │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 This layout describes information placement only. It does not define the final visual design or Angular component structure.

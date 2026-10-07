@@ -12,6 +12,8 @@ using Beridian.Api.Endpoints.FinancialPeriods.EnterExpenseUsingDetails;
 using Beridian.Api.Endpoints.FinancialPeriods.EnterIncome;
 using Beridian.Api.Endpoints.FinancialPeriods.GenerateNextFinancialPeriod;
 using Beridian.Api.Endpoints.FinancialPeriods.GetFinancialPeriod;
+using Beridian.Api.Endpoints.FinancialPeriods.GetFinancialPeriodByPeriod;
+using Beridian.Api.Endpoints.FinancialPeriods.SynchronizeCurrentFinancialPeriod;
 using Beridian.Api.Versioning;
 
 namespace Beridian.Api.Endpoints.FinancialPeriods;
@@ -34,9 +36,10 @@ public static class FinancialPeriodEndpoints
 
         CreateFinancialPeriodEndpoint.Map(group);
         GetFinancialPeriodEndpoint.Map(group);
+        GetFinancialPeriodByPeriodEndpoint.Map(group);
         CloseFinancialPeriodEndpoint.Map(group);
-
         GenerateNextFinancialPeriodEndpoint.Map(group);
+        SynchronizeCurrentFinancialPeriodEndpoint.Map(group);
 
         AddIncomeEndpoint.Map(group);
         EnterIncomeEndpoint.Map(group);
@@ -44,13 +47,14 @@ public static class FinancialPeriodEndpoints
         AddRecurringExpenseEndpoint.Map(group);
         AddFixedTermExpenseEndpoint.Map(group);
         AddDiscretionaryExpenseEndpoint.Map(group);
-        AddExpenseDetailEndpoint.Map(group);
-
         EnterExpenseEndpoint.Map(group);
         EnterExpenseUsingDetailsEndpoint.Map(group);
 
+        AddExpenseDetailEndpoint.Map(group);
+
         AddInvestmentEndpoint.Map(group);
         ConfirmInvestmentEndpoint.Map(group);
+
 
         return endpoints;
     }

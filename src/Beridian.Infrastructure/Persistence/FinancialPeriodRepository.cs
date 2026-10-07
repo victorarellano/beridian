@@ -13,6 +13,38 @@ public sealed class FinancialPeriodRepository : IFinancialPeriodRepository
         _dbContext = dbContext;
     }
 
+    public async Task<bool> AnyAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.FinancialPeriods
+            .AnyAsync(cancellationToken);
+    }    
+
+    public async Task<FinancialPeriod?> GetByPeriodAsync(Period period, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.FinancialPeriods
+            .Include(financialPeriod => financialPeriod.Expenses)
+                .ThenInclude(expense => expense.Details)
+            .Include(financialPeriod => financialPeriod.Incomes)
+            .Include(financialPeriod => financialPeriod.Investments)
+            .SingleOrDefaultAsync(
+                financialPeriod =>
+                    financialPeriod.Period.Year == period.Year &&
+                    financialPeriod.Period.Month == period.Month,
+                cancellationToken);
+    }
+
+    public async Task<FinancialPeriod?> GetLatestAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.FinancialPeriods
+            .Include(financialPeriod => financialPeriod.Expenses)
+                .ThenInclude(expense => expense.Details)
+            .Include(financialPeriod => financialPeriod.Incomes)
+            .Include(financialPeriod => financialPeriod.Investments)
+            .OrderByDescending(financialPeriod => financialPeriod.Period.Year)
+            .ThenByDescending(financialPeriod => financialPeriod.Period.Month)
+            .FirstOrDefaultAsync(cancellationToken);
+    }    
+
     public async Task<FinancialPeriod?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dbContext.FinancialPeriods

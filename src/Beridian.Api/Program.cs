@@ -49,3 +49,5 @@ app.MapFinancialPeriodEndpoints();
 
 app.Run();
 
+public partial class Program;
+

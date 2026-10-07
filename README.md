@@ -314,6 +314,8 @@ dotnet add tests/Beridian.Infrastructure.Tests/Beridian.Infrastructure.Tests.csp
 dotnet add tests/Beridian.Infrastructure.Tests/Beridian.Infrastructure.Tests.csproj package Testcontainers.PostgreSql
 dotnet add tests/Beridian.Api.Tests/Beridian.Api.Tests.csproj reference src/Beridian.Api/Beridian.Api.csproj
 dotnet add tests/Beridian.Api.Tests/Beridian.Api.Tests.csproj package FluentAssertions
+dotnet add tests/Beridian.Api.Tests/Beridian.Api.Tests.csproj package Microsoft.AspNetCore.Mvc.Testing --version 8.0.0
+dotnet add tests/Beridian.Api.Tests/Beridian.Api.Tests.csproj package Testcontainers.PostgreSql
 
 dotnet build
 

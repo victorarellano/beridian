@@ -17,8 +17,7 @@ public abstract class Expense
 
     public ExpenseStatus Status { get; private set; }
 
-    public IReadOnlyCollection<ExpenseDetail> Details =>
-        _details.AsReadOnly();
+    public IReadOnlyCollection<ExpenseDetail> Details => _details.AsReadOnly();
 
     protected Expense()
     {

@@ -424,4 +424,138 @@ public sealed class FinancialPeriodRepositoryTests
         Assert.Equal("ck_expenses_installments", exception.ConstraintName);
     }
 
+
+    [Fact]
+    public async Task AnyAsync_WhenFinancialPeriodsExist_ShouldReturnTrue()
+    {
+        // Arrange
+        await _fixture.ResetDatabaseAsync();
+
+        var financialPeriod = FinancialPeriod.CreateInitial(Period.Create(2026, 8));
+
+        await using (var seedDbContext = _fixture.CreateDbContext())
+        {
+            var seedRepository = new FinancialPeriodRepository(seedDbContext);
+
+            await seedRepository.AddAsync(financialPeriod);
+        }
+
+        await using var dbContext = _fixture.CreateDbContext();
+        var repository = new FinancialPeriodRepository(dbContext);
+
+        // Act
+        var result = await repository.AnyAsync();
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task AnyAsync_WhenNoFinancialPeriodsExist_ShouldReturnFalse()
+    {
+        // Arrange
+        await _fixture.ResetDatabaseAsync();
+
+        await using var dbContext = _fixture.CreateDbContext();
+        var repository = new FinancialPeriodRepository(dbContext);
+
+        // Act
+        var result = await repository.AnyAsync();
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task GetByPeriodAsync_WhenFinancialPeriodExists_ShouldReturnFinancialPeriod()
+    {
+        // Arrange
+        await _fixture.ResetDatabaseAsync();
+
+        var financialPeriod = FinancialPeriod.CreateInitial(Period.Create(2026, 8));
+
+        await using (var seedDbContext = _fixture.CreateDbContext())
+        {
+            var seedRepository = new FinancialPeriodRepository(seedDbContext);
+
+            await seedRepository.AddAsync(financialPeriod);
+        }
+
+        await using var dbContext = _fixture.CreateDbContext();
+        var repository = new FinancialPeriodRepository(dbContext);
+
+        // Act
+        var result = await repository.GetByPeriodAsync(Period.Create(2026, 8));
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(financialPeriod.Id, result.Id);
+        Assert.Equal(2026, result.Period.Year);
+        Assert.Equal(8, result.Period.Month);
+    }
+
+    [Fact]
+    public async Task GetByPeriodAsync_WhenFinancialPeriodDoesNotExist_ShouldReturnNull()
+    {
+        // Arrange
+        await _fixture.ResetDatabaseAsync();
+
+        await using var dbContext = _fixture.CreateDbContext();
+        var repository = new FinancialPeriodRepository(dbContext);
+
+        // Act
+        var result = await repository.GetByPeriodAsync(Period.Create(2026, 8));
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetLatestAsync_WhenFinancialPeriodsExist_ShouldReturnLatestFinancialPeriod()
+    {
+        // Arrange
+        await _fixture.ResetDatabaseAsync();
+
+        var june = FinancialPeriod.CreateInitial(Period.Create(2026, 6));
+
+        var august = FinancialPeriod.CreateInitial(Period.Create(2026, 8));
+
+        var july = FinancialPeriod.CreateInitial(Period.Create(2026, 7));
+
+        await using (var seedDbContext = _fixture.CreateDbContext())
+        {
+            var seedRepository = new FinancialPeriodRepository(seedDbContext);
+
+            await seedRepository.AddAsync(june);
+            await seedRepository.AddAsync(august);
+            await seedRepository.AddAsync(july);
+        }
+
+        await using var dbContext = _fixture.CreateDbContext();
+        var repository = new FinancialPeriodRepository(dbContext);
+
+        // Act
+        var result = await repository.GetLatestAsync();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2026, result.Period.Year);
+        Assert.Equal(8, result.Period.Month);
+    }
+
+    [Fact]
+    public async Task GetLatestAsync_WhenNoFinancialPeriodsExist_ShouldReturnNull()
+    {
+        // Arrange
+        await _fixture.ResetDatabaseAsync();
+
+        await using var dbContext = _fixture.CreateDbContext();
+        var repository = new FinancialPeriodRepository(dbContext);
+
+        // Act
+        var result = await repository.GetLatestAsync();
+
+        // Assert
+        Assert.Null(result);
+    }
 }

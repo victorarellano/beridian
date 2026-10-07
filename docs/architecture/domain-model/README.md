@@ -96,8 +96,7 @@ Enumerations define controlled business states and classifications.
 
 ## Domain Services
 
-Domain Services coordinate business operations that span multiple domain
-concepts.
+Domain Services coordinate business operations that span multiple domain concepts.
 
 | Domain Service | Description |
 |----------------|-------------|
@@ -317,10 +316,8 @@ domain-model/
 └── README.md
 ```
 
-Each directory contains the documentation of a specific category of domain
-concepts.
-Except for Aggregates, every category also provides a `template.md` file to
-ensure a consistent documentation structure across the project.
+Each directory contains the documentation of a specific category of domain concepts.
+Except for Aggregates, every category also provides a `template.md` file to ensure a consistent documentation structure across the project.
 
 ---
 

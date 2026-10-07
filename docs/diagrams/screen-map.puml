@@ -1,0 +1,115 @@
+@startuml
+title Beridian - Financial Period Screen Map
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+rectangle "Financial Period\nMain Screen" as FinancialPeriod {
+
+    rectangle "Period Navigation" as Navigation
+    rectangle "Income Section" as Income
+    rectangle "Expense Section" as Expense
+    rectangle "Investment Section" as Investment
+    rectangle "Period Lifecycle" as Lifecycle
+}
+
+rectangle "Select Period Modal" as SelectPeriodModal
+
+rectangle "Add Income Modal" as AddIncomeModal
+rectangle "Confirm Income Modal" as ConfirmIncomeModal
+
+rectangle "Add Expense Modal" as AddExpenseModal
+rectangle "Confirm Expense Modal" as ConfirmExpenseModal
+rectangle "Expense Details Modal" as ExpenseDetailsModal
+
+rectangle "Confirm Investment Modal" as ConfirmInvestmentModal
+
+rectangle "Close Period Modal" as ClosePeriodModal
+rectangle "Generate Period Modal" as GeneratePeriodModal
+
+FinancialPeriod --> Navigation
+FinancialPeriod --> Income
+FinancialPeriod --> Expense
+FinancialPeriod --> Investment
+FinancialPeriod --> Lifecycle
+
+Navigation --> SelectPeriodModal : Search
+
+Income --> AddIncomeModal : Add Income
+Income --> ConfirmIncomeModal : Confirm Income
+
+Expense --> AddExpenseModal : Add Expense
+Expense --> ConfirmExpenseModal : Confirm\nwithout details
+Expense --> ExpenseDetailsModal : View / Edit / Confirm\ndetails
+
+Investment --> ConfirmInvestmentModal : Confirm Actual
+
+Lifecycle --> ClosePeriodModal : Close Period
+Lifecycle --> GeneratePeriodModal : Generate Current Period
+
+note right of FinancialPeriod
+Main interaction surface for the MVP.
+
+States:
+- Open Period
+- Closed / Historical Period
+
+Closed periods are read-only.
+end note
+
+note right of Navigation
+Previous / Next navigate only
+through existing periods.
+
+Search opens Select Period Modal.
+end note
+
+note right of ExpenseDetailsModal
+Used when the expense has details.
+
+Actual Amount is derived from
+the sum of the expense details.
+
+Allows:
+- View details
+- Add details
+- Edit details
+- Confirm expense
+end note
+
+note right of ConfirmExpenseModal
+Used when the expense
+does not have details.
+
+The user enters the Actual Amount
+and confirms the expense.
+end note
+
+note right of Investment
+Planned Investment is calculated
+from the financial balance
+and is read-only.
+
+Only Actual Investment
+is confirmed by the user.
+end note
+
+note right of ClosePeriodModal
+Available only when all required
+income, expense and investment
+operations are confirmed.
+
+Shows financial summary
+before closing.
+end note
+
+note right of GeneratePeriodModal
+Manual generation is available
+from the first day of the month
+when the current period does not exist.
+
+Acts as an alternative to the
+scheduled automatic generation.
+end note
+
+@enduml

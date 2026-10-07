@@ -8,6 +8,8 @@ using Beridian.Application.FinancialPeriods.CloseFinancialPeriod;
 using Beridian.Application.FinancialPeriods.CreateFinancialPeriod;
 using Beridian.Application.FinancialPeriods.GenerateNextFinancialPeriod;
 using Beridian.Application.FinancialPeriods.GetFinancialPeriod;
+using Beridian.Application.FinancialPeriods.GetFinancialPeriodByPeriod;
+using Beridian.Application.FinancialPeriods.SynchronizeCurrentFinancialPeriod;
 using Beridian.Application.Incomes.AddIncome;
 using Beridian.Application.Incomes.EnterIncome;
 using Beridian.Application.Investments.AddInvestment;
@@ -26,6 +28,8 @@ public static class DependencyInjection
         services.AddScoped<GenerateNextFinancialPeriodHandler>();
         services.AddScoped<CloseFinancialPeriodHandler>();
         services.AddScoped<GetFinancialPeriodHandler>();
+        services.AddScoped<GetFinancialPeriodByPeriodHandler>();
+        services.AddScoped<SynchronizeCurrentFinancialPeriodHandler>();
 
         services.AddScoped<AddRecurringExpenseHandler>();
         services.AddScoped<AddDiscretionaryExpenseHandler>();
@@ -41,7 +45,6 @@ public static class DependencyInjection
         services.AddScoped<ConfirmInvestmentHandler>();
 
         services.AddScoped<FinancialPeriodGenerator>();
-
         return services;
 
     }
