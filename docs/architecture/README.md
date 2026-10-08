@@ -118,6 +118,25 @@ Topics include:
 
 ---
 
+### Frontend Architecture
+
+**File**
+
+[Frontend Architecture](./frontend/frontend-architecture.md)
+
+**Purpose**
+
+Documents the Angular frontend architecture adopted by Beridian, including:
+
+- domain-based organization;
+- frontend architectural layers and dependency principles;
+- initial component hierarchy;
+- financial period dashboard components and dialogs;
+- shared UI responsibilities;
+- architectural evolution considerations.
+
+---
+
 ### Domain Model
 
 **Folder**
