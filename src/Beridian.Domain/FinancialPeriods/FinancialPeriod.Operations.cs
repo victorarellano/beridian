@@ -19,18 +19,28 @@ public sealed partial class FinancialPeriod
 
         var expense = FindExpense(expenseId);
 
-        if (detail.TransactionDate.HasValue && !Period.Contains(detail.TransactionDate.Value))
-        {
-            throw new ExpenseDetailDateOutsideFinancialPeriodException(
-                Id,
-                expenseId,
-                detail.TransactionDate.Value,
-                Period.Year,
-                Period.Month);
-        }
+        EnsureExpenseDetailDateWithinPeriod(expenseId, detail.TransactionDate);
 
         expense.AddDetail(detail);
     }
+
+    public void UpdateExpenseDetail(Guid expenseId, Guid detailId, string description, Money actualAmount, DateOnly? transactionDate, Money? plannedAmount)
+    {
+        EnsureIsOpen();
+
+        var expense = FindExpense(expenseId);
+
+        EnsureExpenseDetailDateWithinPeriod(expenseId, transactionDate);
+
+        expense.UpdateDetail(detailId, description, actualAmount, transactionDate, plannedAmount);
+    }
+
+    public void RemoveExpenseDetail(Guid expenseId, Guid detailId)
+    {
+        EnsureIsOpen();
+        var expense = FindExpense(expenseId);
+        expense.RemoveDetail(detailId);
+    }     
 
     public void EnterExpense(Guid expenseId, Money actualAmount)
     {
@@ -65,6 +75,13 @@ public sealed partial class FinancialPeriod
     }
 
 
+    private void EnsureExpenseDetailDateWithinPeriod(Guid expenseId, DateOnly? transactionDate)
+    {
+        if (transactionDate.HasValue && !Period.Contains(transactionDate.Value))
+        {
+            throw new ExpenseDetailDateOutsideFinancialPeriodException(Id, expenseId, transactionDate.Value, Period.Year, Period.Month);
+        }
+    }
     private Expense FindExpense(Guid expenseId)
     {
         return _expenses.SingleOrDefault(expense => expense.Id == expenseId) ??

@@ -10,17 +10,14 @@ internal static class FinancialPeriodTestData
 {
     public static FinancialPeriod CreateComplete()
     {
-        var financialPeriod = FinancialPeriod.CreateInitial(
-            Period.Create(2026, 8));
+        var financialPeriod = FinancialPeriod.CreateInitial(Period.Create(2026, 8));
 
-        var expense = RecurringExpense.Create(
-            "Electricity",
-            Money.Create(80_000m, Currency.Clp));
+        var expense = RecurringExpense.Create("Electricity", Money.Create(80_000m, Currency.Clp));
 
         financialPeriod.AddExpense(expense);
 
         financialPeriod.AddExpenseDetail(
-            expense.Id,
+            expense.Id, 
             ExpenseDetail.Create(
                 "August electricity bill",
                 Money.Create(75_000m, Currency.Clp),

@@ -16,8 +16,7 @@ public sealed class PeriodTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void Create_WithInvalidYear_ShouldThrowArgumentOutOfRangeException(
-        int year)
+    public void Create_WithInvalidYear_ShouldThrowArgumentOutOfRangeException(int year)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(
             () => Period.Create(year, 8));
@@ -29,8 +28,7 @@ public sealed class PeriodTests
     [InlineData(0)]
     [InlineData(13)]
     [InlineData(-1)]
-    public void Create_WithInvalidMonth_ShouldThrowArgumentOutOfRangeException(
-        int month)
+    public void Create_WithInvalidMonth_ShouldThrowArgumentOutOfRangeException(int month)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(
             () => Period.Create(2026, month));

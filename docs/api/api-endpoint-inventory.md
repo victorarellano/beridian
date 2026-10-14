@@ -69,7 +69,8 @@ The Financial Period endpoint group currently exposes operations for:
 | Operation | Method | Route | Request | Result | Application Operation |
 |---|---|---|---|---|---|
 | Add Expense Detail | POST | `/api/v1/financial-periods/{financialPeriodId}/expenses/{expenseId}/details` | `AddExpenseDetailRequest` | `AddExpenseDetailResult` | `AddExpenseDetailCommand` |
-
+| Update Expense Detail | PUT | `/api/v1/financial-periods/{financialPeriodId}/expenses/{expenseId}/details/{expenseDetailId}` | `UpdateExpenseDetailRequest` | `UpdateExpenseDetailResult` | `UpdateExpenseDetailCommand` |
+| Remove Expense Detail | DELETE | `/api/v1/financial-periods/{financialPeriodId}/expenses/{expenseId}/details/{expenseDetailId}` | Route IDs only | `RemoveExpenseDetailResult` | `RemoveExpenseDetailCommand` |
 ---
 
 ### Investment Management
@@ -141,6 +142,15 @@ The Financial Period endpoint group currently exposes operations for:
 | TransactionDate | `DateOnly?` | No |
 | PlannedAmount | `decimal?` | No |
 
+### UpdateExpenseDetailRequest
+
+| Field | Type | Required |
+|---|---|---|
+| Description | `string` | Yes |
+| ActualAmount | `decimal` | Yes |
+| TransactionDate | `DateOnly?` | No |
+| PlannedAmount | `decimal?` | No |
+
 ### EnterExpenseRequest
 
 | Field | Type |
@@ -173,6 +183,7 @@ The current API uses the following success responses:
 | Resource creation | `201 Created` |
 | State transition or confirmation | `200 OK` |
 | Query | `200 OK` |
+| Resource update or removal | `200 OK` |
 
 Creation operations return a `Location` referencing the related financial period.
 
@@ -233,6 +244,7 @@ Handled domain and application exceptions are transformed into standardized Prob
 | Expense has details | `409 Conflict` |
 | Expense has no details | `409 Conflict` |
 | Expense detail date outside financial period | `400 Bad Request` |
+| Expense detail not found | `404 Not Found` |
 
 ### Investment Errors
 
@@ -251,13 +263,13 @@ The reviewed API currently exposes **16 Financial Period endpoints**:
 | Financial Period Lifecycle | 6 |
 | Income Management | 2 |
 | Expense Management | 5 |
-| Expense Detail Management | 1 |
+| Expense Detail Management | 3 |
 | Investment Management | 2 |
-| **Total** | **16** |
+| **Total** | **18** |
 
 The implementation currently contains:
 - 2 query endpoints.
-- 14 command-oriented endpoints.
+- 16 command-oriented endpoints.
 - API versioning through `v1`.
 - Request validation for supported input models.
 - Centralized Problem Details exception handling.

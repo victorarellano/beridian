@@ -4,6 +4,7 @@ using Beridian.Application.FinancialPeriods.Exceptions;
 using Beridian.Application.Tests.TestDoubles;
 using Beridian.Domain.Common;
 using Beridian.Domain.Expenses;
+using Beridian.Domain.Expenses.Exceptions;
 using Beridian.Domain.FinancialPeriods;
 using Beridian.Domain.FinancialPeriods.Exceptions;
 
@@ -70,9 +71,9 @@ public sealed class AddExpenseDetailHandlerTest
     }
 
     [Fact]
-    public async Task HandleAsync_WhenExpenseDetailDoesNotBelongToPeriod_ShouldThrowInvalidOperationExpenseDetail()
+    public async Task HandleAsync_WhenExpenseDoesNotBelongToPeriod_ShouldThrowExpenseNotFoundException()
     {
-        //Arrange
+        // Arrange
         var repository = new FakeFinancialPeriodRepository();
 
         var financialPeriod = FinancialPeriod.CreateInitial(Period.Create(2026, 8));
@@ -80,14 +81,11 @@ public sealed class AddExpenseDetailHandlerTest
         repository.Seed(financialPeriod);
 
         var handler = new AddExpenseDetailHandler(repository);
-        var command = new AddExpenseDetailCommand(
-            Guid.NewGuid(),
-            Guid.NewGuid(),
-            "Lunch",
-            15_000m);
 
-        //Act & Assert
-        await Assert.ThrowsAsync<FinancialPeriodNotFoundException>(() => handler.HandleAsync(command));
+        var command = new AddExpenseDetailCommand(financialPeriod.Id, Guid.NewGuid(), "Lunch", 15_000m);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ExpenseNotFoundInFinancialPeriodException>(() => handler.HandleAsync(command));
 
         Assert.Null(repository.UpdatedFinancialPeriod);
     }

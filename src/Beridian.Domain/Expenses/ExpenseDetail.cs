@@ -27,6 +27,23 @@ public sealed class ExpenseDetail
 
     public static ExpenseDetail Create(string description, Money actualAmount, DateOnly? transactionDate = null, Money? plannedAmount = null)
     {
+        Validate(description, actualAmount, plannedAmount);
+
+        return new ExpenseDetail(Guid.NewGuid(), description.Trim(), transactionDate, plannedAmount, actualAmount);
+    }
+
+    public void Update(string description, Money actualAmount, DateOnly? transactionDate, Money? plannedAmount)
+    {
+        Validate(description, actualAmount, plannedAmount);
+
+        Description = description.Trim();
+        ActualAmount = actualAmount;
+        TransactionDate = transactionDate;
+        PlannedAmount = plannedAmount;
+    }
+
+    private static void Validate(string description, Money actualAmount, Money? plannedAmount)
+    {
         if (string.IsNullOrWhiteSpace(description))
         {
             throw new ArgumentException("Expense detail description cannot be empty.", nameof(description));
@@ -39,25 +56,19 @@ public sealed class ExpenseDetail
             throw new ArgumentOutOfRangeException(nameof(actualAmount), "Expense detail actual amount cannot be negative.");
         }
 
-        if (plannedAmount is not null)
+        if (plannedAmount is null)
         {
-            if (plannedAmount.Amount < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(plannedAmount), "Expense detail planned amount cannot be negative.");
-            }
-
-            if (plannedAmount.Currency != actualAmount.Currency)
-            {
-                throw new InvalidOperationException("Planned and actual amounts must use the same currency.");
-            }
+            return;
         }
 
-        return new ExpenseDetail(
-            Guid.NewGuid(),
-            description.Trim(),
-            transactionDate,
-            plannedAmount,
-            actualAmount);
-    }
+        if (plannedAmount.Amount < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(plannedAmount), "Expense detail planned amount cannot be negative.");
+        }
+
+        if (plannedAmount.Currency != actualAmount.Currency)
+        {
+            throw new InvalidOperationException("Planned and actual amounts must use the same currency.");
+        }
+    }    
 }

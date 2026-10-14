@@ -67,6 +67,34 @@ public abstract class Expense
         ActualAmount = CalculateActualAmount();
     }
 
+    internal void UpdateDetail(Guid detailId, string description, Money actualAmount, DateOnly? transactionDate, Money? plannedAmount)
+    {
+        EnsureCreated();
+
+        var detail = _details.SingleOrDefault(d => d.Id == detailId)?? throw new ExpenseDetailNotFoundException(Id, detailId);
+
+        ArgumentNullException.ThrowIfNull(actualAmount);
+
+        if (actualAmount.Currency != PlannedAmount.Currency)
+        {
+            throw new InvalidOperationException("Expense detail currency must match the expense currency.");
+        }
+
+        detail.Update(description, actualAmount, transactionDate, plannedAmount);
+        ActualAmount = CalculateActualAmount();
+    }
+
+    internal void RemoveDetail(Guid detailId)
+    {
+        EnsureCreated();
+
+        var detail = _details.SingleOrDefault(d => d.Id == detailId)?? throw new ExpenseDetailNotFoundException(Id, detailId);
+
+        _details.Remove(detail);
+
+        ActualAmount = CalculateActualAmount();
+    }        
+
     internal void Enter(Money actualAmount)
     {
         ArgumentNullException.ThrowIfNull(actualAmount);

@@ -558,4 +558,109 @@ public sealed class FinancialPeriodRepositoryTests
         // Assert
         Assert.Null(result);
     }
+
+    [Fact]
+    public async Task UpdateAsync_WhenExpenseDetailIsUpdated_ShouldPersistChanges()
+    {
+        // Arrange
+        await _fixture.ResetDatabaseAsync();
+
+        var financialPeriod = FinancialPeriod.CreateInitial(Period.Create(2026, 8));
+
+        var expense = DiscretionaryExpense.Create("Personal Expenses", Currency.Clp);
+
+        financialPeriod.AddExpense(expense);
+
+        var detail = ExpenseDetail.Create("Lunch", Money.Create(15_000m, Currency.Clp), new DateOnly(2026, 8, 5));
+
+        financialPeriod.AddExpenseDetail(expense.Id, detail);
+
+        await using (var seedDbContext = _fixture.CreateDbContext())
+        {
+            var repository = new FinancialPeriodRepository(seedDbContext);
+            await repository.AddAsync(financialPeriod);
+        }
+
+        // Act
+        await using (var updateDbContext = _fixture.CreateDbContext())
+        {
+            var repository = new FinancialPeriodRepository(updateDbContext);
+
+            var persistedPeriod = await repository.GetByIdAsync(financialPeriod.Id);
+            Assert.NotNull(persistedPeriod);
+
+            persistedPeriod.UpdateExpenseDetail(expense.Id, detail.Id, "Dinner", Money.Create(25_000m, Currency.Clp), new DateOnly(2026, 8, 10), Money.Create(30_000m, Currency.Clp));
+
+            await repository.UpdateAsync(persistedPeriod);
+        }
+
+        // Assert
+        await using var verificationDbContext = _fixture.CreateDbContext();
+        var verificationRepository = new FinancialPeriodRepository(verificationDbContext);
+
+        var result = await verificationRepository.GetByIdAsync(financialPeriod.Id);
+        Assert.NotNull(result);
+
+        var persistedExpense = Assert.Single(result.Expenses);
+        var persistedDetail = Assert.Single(persistedExpense.Details);
+
+        Assert.Equal(detail.Id, persistedDetail.Id);
+        Assert.Equal("Dinner", persistedDetail.Description);
+        Assert.Equal(25_000m, persistedDetail.ActualAmount.Amount);
+        Assert.Equal(30_000m, persistedDetail.PlannedAmount?.Amount);
+        Assert.Equal(new DateOnly(2026, 8, 10), persistedDetail.TransactionDate);
+        Assert.Equal(25_000m, persistedExpense.ActualAmount.Amount);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WhenExpenseDetailIsRemoved_ShouldPersistRemoval()
+    {
+        // Arrange
+        await _fixture.ResetDatabaseAsync();
+
+        var financialPeriod = FinancialPeriod.CreateInitial(Period.Create(2026, 8));
+
+        var expense = DiscretionaryExpense.Create("Personal Expenses", Currency.Clp);
+        financialPeriod.AddExpense(expense);
+
+        var firstDetail = ExpenseDetail.Create("Lunch", Money.Create(15_000m, Currency.Clp), new DateOnly(2026, 8, 5));
+        var secondDetail = ExpenseDetail.Create("Dinner", Money.Create(20_000m, Currency.Clp), new DateOnly(2026, 8, 6));
+
+        financialPeriod.AddExpenseDetail(expense.Id, firstDetail);
+        financialPeriod.AddExpenseDetail(expense.Id, secondDetail);
+
+        await using (var seedDbContext = _fixture.CreateDbContext())
+        {
+            var repository = new FinancialPeriodRepository(seedDbContext);
+            await repository.AddAsync(financialPeriod);
+        }
+
+        // Act
+        await using (var updateDbContext = _fixture.CreateDbContext())
+        {
+            var repository = new FinancialPeriodRepository(updateDbContext);
+
+            var persistedPeriod = await repository.GetByIdAsync(financialPeriod.Id);
+            Assert.NotNull(persistedPeriod);
+
+            persistedPeriod.RemoveExpenseDetail(expense.Id, firstDetail.Id);
+
+            await repository.UpdateAsync(persistedPeriod);
+        }
+
+        // Assert
+        await using var verificationDbContext = _fixture.CreateDbContext();
+        var verificationRepository = new FinancialPeriodRepository(verificationDbContext);
+
+        var result = await verificationRepository.GetByIdAsync(financialPeriod.Id);
+        Assert.NotNull(result);
+
+        var persistedExpense = Assert.Single(result.Expenses);
+        var remainingDetail = Assert.Single(persistedExpense.Details);
+
+        Assert.Equal(secondDetail.Id, remainingDetail.Id);
+        Assert.DoesNotContain(persistedExpense.Details, candidate => candidate.Id == firstDetail.Id);
+
+        Assert.Equal(20_000m, persistedExpense.ActualAmount.Amount);
+    }    
 }
