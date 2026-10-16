@@ -257,7 +257,7 @@ Handled domain and application exceptions are transformed into standardized Prob
 
 ## Current API Summary
 
-The reviewed API currently exposes **16 Financial Period endpoints**:
+The reviewed API currently exposes **18 Financial Period endpoints**:
 | Area | Endpoint Count |
 |---|---:|
 | Financial Period Lifecycle | 6 |
